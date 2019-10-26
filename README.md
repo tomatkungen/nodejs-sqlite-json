@@ -59,7 +59,7 @@ Document.getDocument('<documentName>').property('<key>').valueType();
 
 ```
 
-### Package Doocuments
+### Package Doocument
 
 ```Javascript
 /*
@@ -74,21 +74,21 @@ Document.getDocument('<documentName>').property('<key>').valueType();
         }
     }
 
-    @return Class.PackageDocument
+    @return Class.Package
  */
 Document.createPackage('<PackageName>')
         .add('<DocumentName1>')
         .add('<DocumentName2>', '<DocumentName3>')
 
 // Return Class.Package
-Document.getPackage('<PackageName>')
+Document.package('<PackageName>')
 
 // Return value as Json { <d1>:..., <d2>:.. }
-Document.getPackage('<PackageName>').toJson();
+Document.package('<PackageName>').toJson();
 
 // Return value as Array [{d1}, {d2}...]
-Document.getPackage('<PackageName>').toArray();
+Document.package('<PackageName>').toArray();
 
 // Return Class.Document
-Document.getPackage('<PackageName>').getDocument('<DocumentName>');
+Document.package('<PackageName>').getDocument('<DocumentName>');
 ```
