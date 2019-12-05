@@ -59,7 +59,7 @@ Document.getDocument('<documentName>').property('<key>').valueType();
 
 ```
 
-### Package Doocument
+### Create Package Document
 
 ```Javascript
 /*
