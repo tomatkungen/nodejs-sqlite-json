@@ -35,4 +35,35 @@ interface iKey {
     valueType(): tValueType;
 }
 
-export {iDocument, iPackage, iKey, tValueType};
+interface iSqlite {
+    json(json: string): string;
+    json_array(...args: any[]): string;
+    json_array_length(json: string): number;
+    json_array_length(json: string, path: string) : number;
+    json_extract(json: string, path: string,): string;
+    json_insert(json: string, path: string, ...value: number[]): string;
+    json_object(...arg: (number | string )[]): string;
+    json_patch(json1: string ,json2: string): string;
+    json_remove(json: string, path: string, ...args: string[]): string;
+    json_replace(json: string, path: string, ...value: (number | string)[]): string;
+    json_set(json: string, path: string, ...value: (string | number)[]): string;
+    json_type(json: string): tValueType;
+    json_type(json: string, path: string): tValueType;
+    json_valid(json: string): 0 | 1;
+    json_quote(value: (number | string)): string;
+}
+
+interface iSqliteNode {
+    Version: () => string;
+    Execute(rawQuery: string): any;
+    Select(rawQuery: string): any;
+}
+
+export {
+    iDocument,
+    iPackage,
+    iKey,
+    tValueType,
+    iSqliteNode,
+    iSqlite 
+};
