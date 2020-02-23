@@ -1,12 +1,20 @@
-import { iDocument, iPackage } from "../interface/iStructure";
+import { iDocument } from "../interface/iStructure";
 import { cPackage } from "./cPackage";
 import { cKey } from "./cKey";
 
 
 class cDocument implements iDocument {
-    constructor(private documentName?: string) {}
+    private _documentName: string;
 
-    public create(documentName: string): this { return this; }
+    constructor() {
+        this._documentName = 'document';
+    }
+
+    public create(documentName: string): this {
+        this._documentName = documentName;
+
+        return this;
+    }
 
     public merge(json: {}): this { return this; }
 

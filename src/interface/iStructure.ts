@@ -36,27 +36,25 @@ interface iKey {
 }
 
 interface iSqlite {
-    json(json: string): string;
-    json_array(...args: any[]): string;
-    json_array_length(json: string): number;
-    json_array_length(json: string, path: string) : number;
-    json_extract(json: string, path: string,): string;
-    json_insert(json: string, path: string, ...value: number[]): string;
-    json_object(...arg: (number | string )[]): string;
-    json_patch(json1: string ,json2: string): string;
-    json_remove(json: string, path: string, ...args: string[]): string;
-    json_replace(json: string, path: string, ...value: (number | string)[]): string;
-    json_set(json: string, path: string, ...value: (string | number)[]): string;
-    json_type(json: string): tValueType;
-    json_type(json: string, path: string): tValueType;
-    json_valid(json: string): 0 | 1;
-    json_quote(value: (number | string)): string;
+    f_json(json: { [key: string] : any }): string;
+    f_json_array(...args: ((string | number | null)[])): string;
+    f_json_array_length(json: { [key: string]: any} | any[], path?: string): string;
+    f_json_extract(json: { [key: string]: any}, ...paths: string[]): string;
+    f_json_insert(json: { [key: string]: any} | any[], path: string, value: any): string;
+    f_json_object(json: { [key: string] : any}): string;
+    f_json_patch(json1: { [key: string] : any}, json2: { [key: string] : any}): string;
+    f_json_remove(json: { [key: string] : any} | any[], ...path: string[]): string;
+    f_json_replace(json: { [key: string]: any} | any[], path: string, value: any): string;
+    f_json_set(json: { [key: string]: any} | any[], path: string, value: any): string;
+    f_json_type(json: { [key: string]: any}, path: string): string;
+    f_json_valid(json: { [key: string]: any}): string;
+    f_json_quote(value: (number | string)): string;
 }
 
 interface iSqliteNode {
     Version: () => string;
-    Execute(rawQuery: string): any;
-    Select(rawQuery: string): any;
+    Execute(databse: string, rawQuery: string): any;
+    Select(database: string, rawQuery: string): any;
 }
 
 export {

@@ -3,10 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var cPackage_1 = require("./cPackage");
 var cKey_1 = require("./cKey");
 var cDocument = (function () {
-    function cDocument(documentName) {
-        this.documentName = documentName;
+    function cDocument() {
+        this._documentName = 'document';
     }
-    cDocument.prototype.create = function (documentName) { return this; };
+    cDocument.prototype.create = function (documentName) {
+        this._documentName = documentName;
+        return this;
+    };
     cDocument.prototype.merge = function (json) { return this; };
     cDocument.prototype.getDocument = function (documentName) { return this; };
     cDocument.prototype.toJson = function () { return {}; };
