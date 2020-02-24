@@ -21,41 +21,41 @@ Install
 Document.create('<documentName>').append('<Json>');
 
 // Return json from Class.Document
-Document.getDocument('<documentName>').toJson();
+Document.document('<documentName>').toJson();
 
 // Return Class.Document.Key
-Document.getDocument('<documentName>').property('<key>');
-Document.getDocument('<documentName>').property('<key>').key('<key>');
+Document.document('<documentName>').property('<key>');
+Document.document('<documentName>').property('<key>').key('<key>');
 
 // Return Value from Class.Document.Key
-Document.getDocument('<documentName>').property('<key>').value();
+Document.document('<documentName>').property('<key>').value();
 
 // Insert Json  to Class.Document.Key No override if exist, Create if not exist
-Document.getDocument('<documentName>').property('<key>').insert('<Json>');
+Document.document('<documentName>').property('<key>').insert('<Json>');
 
 // Replace Json to Class.Document.Key Override if exist, No create if not exist
-Document.getDocument('<documentName>').property('<key>').replace('<Json>');
+Document.document('<documentName>').property('<key>').replace('<Json>');
 
 // Set Json to Class.Document.Key Override if exist, Create if not exist
-Document.getDocument('<documentName>').property('<key>').set('<Json>');
+Document.document('<documentName>').property('<key>').set('<Json>');
 
 // Merge Json into Document
-Document.getDocument('<documentName>').merge('<Json>');
+Document.document('<documentName>').merge('<Json>');
 
 // Remove Property in Json Class.Document
-Document.getDocument('<documentName>').removeKey('<key>');
-Document.getDocument('<documentName>').removeKeys(['<key>', '<key>']);
+Document.document('<documentName>').removeKey('<key>');
+Document.document('<documentName>').removeKeys(['<key>', '<key>']);
 
 // Remove Item at Index in Array Class.Document.Key
-Document.getDocument('<documentName>').property('<key>').removeAtIndex('<number>');
-Document.getDocument('<documentName>').property('<key>').removeAtIndexs(['<number>', '<number>']);
+Document.document('<documentName>').property('<key>').removeAtIndex('<number>');
+Document.document('<documentName>').property('<key>').removeAtIndexs(['<number>', '<number>']);
 
 // Remove Property in Json Class.Document.Key
-Document.getDocument('<documentName>').property('<key>').removeKey('<key>');
-Document.getDocument('<documentName>')..property('<key>').removeKeys(['<key>', '<key>']);
+Document.document('<documentName>').property('<key>').removeKey('<key>');
+Document.document('<documentName>')..property('<key>').removeKeys(['<key>', '<key>']);
 
 // Return value type  <Object | Array | Integer | real | true | false | null | text | NULL>
-Document.getDocument('<documentName>').property('<key>').valueType();
+Document.document('<documentName>').property('<key>').valueType();
 
 ```
 
@@ -90,5 +90,5 @@ Document.package('<PackageName>').toJson();
 Document.package('<PackageName>').toArray();
 
 // Return Class.Document
-Document.package('<PackageName>').getDocument('<DocumentName>');
+Document.package('<PackageName>').document('<DocumentName>');
 ```

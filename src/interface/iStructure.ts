@@ -1,21 +1,21 @@
+import { cDocument } from "../class/cDocument";
+
 interface iDocument {
-    create(documentName: string): this;
     merge<T extends {}>(json: T): this;
-    getDocument(documentName: string): this;
+    document(documentName: string): this;
     toJson(): object;
-    append<T extends {}>(json: T): boolean;
+    append<T extends { [key: string ]: any }>(json: T): boolean;
 
     removeKey(key: string): boolean;
     removeKeys(keys: string[]): boolean;
 
-    package(packageName: string): iPackage;
     property(key: string): iKey;
 };
 
 interface iPackage {
     toJson(): object;
     toArray(): Array<object>;
-    getDocument(documentName: string): iDocument;
+    document(documentName: string): cDocument;
 }
 
 type tValueType = 'object' | 'array' | 'integer' | 'real' | 'true' | 'false' | 'null' | 'text' | 'NULL';

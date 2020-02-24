@@ -1,36 +1,33 @@
 import { iDocument } from "../interface/iStructure";
 import { cPackage } from "./cPackage";
 import { cKey } from "./cKey";
+import { cSqlite } from "./cSqlite";
 
 
 class cDocument implements iDocument {
+
     private _documentName: string;
+    private _cSqlite: cSqlite;
 
-    constructor() {
-        this._documentName = 'document';
-    }
-
-    public create(documentName: string): this {
-        this._documentName = documentName;
-
-        return this;
+    constructor(document: string = 'document') {
+        this._documentName  = document;
+        this._packageName   = 'package'
+        this._cSqlite       = new cSqlite();
     }
 
     public merge(json: {}): this { return this; }
 
-    public getDocument(documentName: string): this { return this;}
+    public document(documentName: string): this { return this;}
 
     public toJson(): object { return {};}
 
-    public append<T extends {}>(json: T): boolean { return true;}
+    public append<T extends { [key: string]: any; }>(json: T): boolean {
+        return true;
+    }
 
     public removeKey(key: string): boolean { return true;}
 
     public removeKeys(keys: string[]): boolean { return true;}
-
-    public package(packageName: string): cPackage {
-        return new cPackage();
-    };
 
     public property(key: string): cKey {
         return new cKey(key);
