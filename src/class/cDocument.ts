@@ -1,5 +1,4 @@
 import { iDocument } from "../interface/iStructure";
-import { cPackage } from "./cPackage";
 import { cKey } from "./cKey";
 import { cSqlite } from "./cSqlite";
 
@@ -11,7 +10,6 @@ class cDocument implements iDocument {
 
     constructor(document: string = 'document') {
         this._documentName  = document;
-        this._packageName   = 'package'
         this._cSqlite       = new cSqlite();
     }
 

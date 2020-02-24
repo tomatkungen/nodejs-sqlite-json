@@ -18,7 +18,7 @@ Install
 
     @return Class.Document
 */
-Document.create('<documentName>').append('<Json>');
+Document.createDocument('<documentName>').append('<Json>');
 
 // Return json from Class.Document
 Document.document('<documentName>').toJson();

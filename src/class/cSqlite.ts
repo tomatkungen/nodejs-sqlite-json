@@ -7,6 +7,19 @@ class cSqlite extends aSqliteNode implements iSqlite {
         super();
     }
 
+    public createTable(tableName: string): boolean {
+        try {
+            super.Execute(
+                super.databaseName(),
+                `CREATE TABLE IF NOT EXISTS some_table (id INTEGER PRIMARY KEY AUTOINCREMENT, document json)`
+            );
+
+            return true;
+        } catch {
+            return false;
+        }
+    }
+
     /**
      * json( { "this" : "is", "a": [ "test" ] } )  => "json(' { "this" : "is", "a": [ "test" ] } ')"
      */

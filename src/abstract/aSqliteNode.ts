@@ -4,6 +4,10 @@ import * as sqliteBridge from '../addon/sqlitebridge';
 class aSqliteNode implements iSqliteNode {
     constructor() {}
 
+    public databaseName(): string {
+        return 'sandra.db';
+    }
+
     public Version(): string {
         return sqliteBridge.Version();
     }
