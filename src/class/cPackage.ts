@@ -12,16 +12,54 @@ class cPackage implements iPackage {
         this._cSqlite       = new cSqlite();
 
         this._cSqlite
-            .createTable(this._packageName);
+            .executePreDefiniedQuery(
+                'CreateTable',
+                this._packageName
+            );
     }
 
-    public toJson(): object { return {}; }
+    public add(documentName: string): cPackage { 
 
-    public toArray(): Array<object> { return []; }
+        this._cSqlite
+            .executePreDefiniedQuery(
+                'InsertIntoTable',
+                this._packageName,
+                documentName
+            );
+
+        return this; 
+    }
+
+    public toJson(): { [key: string]: any } {
+
+        return this._cSqlite
+            .selectPreDefinedQuery('SelectLimitOne', this._packageName)
+            .reduce((prev: { [key: string]: any }, curr: { [key: string]: any }) => {
+                return {...prev, ...curr};
+            }, {});
+
+    }
+
+    public toArray(): { [column: string]: any }[] {
+
+        return this._cSqlite
+            .selectPreDefinedQuery('SelectLimitOne', this._packageName)
+            .reduce((prev: any[], obj: { [column: string]: any }) => {
+
+                Object.keys(obj).forEach((key: string) => {
+                    let newObj: { [column: string]: any } = {};
+                    newObj[key] = obj[key];
+                    prev.push(newObj);
+                });
+
+                return prev;
+            }, []);
+    }
 
     public document(documentName: string): cDocument {
-        return new cDocument(documentName);
+        return new cDocument(documentName, this._packageName);
     }
+
 }
 
 export {cPackage};

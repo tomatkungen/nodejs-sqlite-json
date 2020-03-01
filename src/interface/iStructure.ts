@@ -1,18 +1,21 @@
 import { cDocument } from "../class/cDocument";
+import { cPackage } from "../class/cPackage";
+import { cProperty } from "../class/cProperty";
 
 interface iDocument {
     merge<T extends {}>(json: T): this;
     document(documentName: string): this;
-    toJson(): object;
+    toJson(): object | null;
     append<T extends { [key: string ]: any }>(json: T): boolean;
 
     removeKey(key: string): boolean;
     removeKeys(keys: string[]): boolean;
 
-    property(key: string): iKey;
+    property(key: string): iProperty;
 };
 
 interface iPackage {
+    add(documentName: string): cPackage;
     toJson(): object;
     toArray(): Array<object>;
     document(documentName: string): cDocument;
@@ -20,8 +23,9 @@ interface iPackage {
 
 type tValueType = 'object' | 'array' | 'integer' | 'real' | 'true' | 'false' | 'null' | 'text' | 'NULL';
 
-interface iKey {
-    key: string;
+interface iProperty {
+    Property(key: string): cProperty;
+
     value(): any;
     insert<T extends {}>(json: T): boolean;
     replace<T extends {}>(json: T): boolean;
@@ -57,11 +61,19 @@ interface iSqliteNode {
     Select(database: string, rawQuery: string): any;
 }
 
+interface iTableInfo {
+    cid: number;
+    name: string;
+    type: string;
+    notnull: number;
+}
+
 export {
     iDocument,
     iPackage,
-    iKey,
     tValueType,
     iSqliteNode,
-    iSqlite 
+    iSqlite,
+    iTableInfo,
+    iProperty
 };

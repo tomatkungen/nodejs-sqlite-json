@@ -1,17 +1,13 @@
 import { cDocument } from '../class/cDocument';
+import { cPackage } from '../class/cPackage';
 
 namespace nDocument {
     
-    export const createDocument = (documentName: string) => 
+    export const Document = (documentName: string) =>
         (new cDocument(documentName));
     
-
-    export const document = (documentName: string) => {
-        (new cDocument(documentName));
-
-
-    export const createPackage = (packageName: string) =>
-        (new cDocument(packageName));
+    export const Package = (packageName: string) =>
+        (new cPackage(packageName));
 
 }
 

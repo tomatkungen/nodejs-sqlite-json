@@ -1,10 +1,24 @@
-import { iKey, tValueType } from "../interface/iStructure";
+import { tValueType, iProperty } from "../interface/iStructure";
 
-class cKey implements iKey {
+class cProperty implements iProperty {
 
-    constructor(public key: string) {}
+    private _property: string;
 
-    public value(): any { return '';}
+    constructor(property: string, public navigateKey: string[]) {
+
+        this._property = property;
+        navigateKey.push(property);
+
+    }
+
+    public Property(key: string) {
+        return new cProperty(key, this.navigateKey);
+    }
+
+    public value(): any {
+        
+        return '';
+    }
 
     public insert<T extends {}>(json: T): boolean { return true; }
 
@@ -24,4 +38,4 @@ class cKey implements iKey {
 
 }
 
-export {cKey};
+export { cProperty };

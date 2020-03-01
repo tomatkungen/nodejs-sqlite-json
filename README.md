@@ -18,44 +18,44 @@ Install
 
     @return Class.Document
 */
-Document.createDocument('<documentName>').append('<Json>');
+nDocument.Document('<documentName>').append('<Json>');
 
 // Return json from Class.Document
-Document.document('<documentName>').toJson();
+nDocument.Document('<documentName>').toJson();
 
-// Return Class.Document.Key
-Document.document('<documentName>').property('<key>');
-Document.document('<documentName>').property('<key>').key('<key>');
+// Return Class.Document.Property
+nDocument.Document('<documentName>').property('<property>');
+nDocument.Document('<documentName>').Property('<propery>').property('<property>');
 
-// Return Value from Class.Document.Key
-Document.document('<documentName>').property('<key>').value();
+// Return Value from Class.Document.Property
+nDocument.Document('<documentName>').Property('<property>').value();
 
-// Insert Json  to Class.Document.Key No override if exist, Create if not exist
-Document.document('<documentName>').property('<key>').insert('<Json>');
+// Insert Json  to Class.Document.Property No override if exist, Create if not exist
+nDocument.Document('<documentName>').Property('<property>').insert('<Json>');
 
-// Replace Json to Class.Document.Key Override if exist, No create if not exist
-Document.document('<documentName>').property('<key>').replace('<Json>');
+// Replace Json to Class.Document.Property Override if exist, No create if not exist
+nDocument.Document('<documentName>').Property('<property>').replace('<Json>');
 
-// Set Json to Class.Document.Key Override if exist, Create if not exist
-Document.document('<documentName>').property('<key>').set('<Json>');
+// Set Json to Class.Document.property Override if exist, Create if not exist
+nDocument.Document('<documentName>').Property('<property>').set('<Json>');
 
 // Merge Json into Document
-Document.document('<documentName>').merge('<Json>');
+nDocument.Document('<documentName>').merge('<Json>');
 
 // Remove Property in Json Class.Document
-Document.document('<documentName>').removeKey('<key>');
-Document.document('<documentName>').removeKeys(['<key>', '<key>']);
+nDocument.Document('<documentName>').removeProperty('<property>');
+nDocument.Document('<documentName>').removePropertys(['<property>', '<property>']);
 
-// Remove Item at Index in Array Class.Document.Key
-Document.document('<documentName>').property('<key>').removeAtIndex('<number>');
-Document.document('<documentName>').property('<key>').removeAtIndexs(['<number>', '<number>']);
+// Remove Item at Index in Array Class.Document.Property
+nDocument.Document('<documentName>').Property('<property>').removeAtIndex('<number>');
+nDocument.Document('<documentName>').Property('<property>').removeAtIndexs(['<number>', '<number>']);
 
-// Remove Property in Json Class.Document.Key
-Document.document('<documentName>').property('<key>').removeKey('<key>');
-Document.document('<documentName>')..property('<key>').removeKeys(['<key>', '<key>']);
+// Remove Property in Json Class.Document.property
+nDocument.Document('<documentName>').Property('<property>').removeProperty('<property>');
+nDocument.Document('<documentName>').Property('<property>').removePropertys(['<property>', '<property>']);
 
 // Return value type  <Object | Array | Integer | real | true | false | null | text | NULL>
-Document.document('<documentName>').property('<key>').valueType();
+nDocument.Document('<documentName>').Property('<property>').valueType();
 
 ```
 
@@ -76,19 +76,19 @@ Document.document('<documentName>').property('<key>').valueType();
 
     @return Class.Package
  */
-Document.createPackage('<PackageName>')
+nDocument.Package('<PackageName>')
         .add('<DocumentName1>')
         .add('<DocumentName2>', '<DocumentName3>')
 
 // Return Class.Package
-Document.package('<PackageName>')
+nDocument.Package('<PackageName>')
 
 // Return value as Json { <d1>:..., <d2>:.. }
-Document.package('<PackageName>').toJson();
+nDocument.Package('<PackageName>').toJson();
 
 // Return value as Array [{d1}, {d2}...]
-Document.package('<PackageName>').toArray();
+nDocument.Package('<PackageName>').toArray();
 
 // Return Class.Document
-Document.package('<PackageName>').document('<DocumentName>');
+nDocument.Package('<PackageName>').document('<DocumentName>');
 ```
