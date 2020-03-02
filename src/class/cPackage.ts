@@ -12,7 +12,7 @@ class cPackage implements iPackage {
         this._cSqlite       = new cSqlite();
 
         this._cSqlite
-            .executePreDefiniedQuery(
+            .exePreQuery(
                 'CreateTable',
                 this._packageName
             );
@@ -21,7 +21,7 @@ class cPackage implements iPackage {
     public add(documentName: string): cPackage { 
 
         this._cSqlite
-            .executePreDefiniedQuery(
+            .exePreQuery(
                 'InsertIntoTable',
                 this._packageName,
                 documentName
@@ -33,7 +33,7 @@ class cPackage implements iPackage {
     public toJson(): { [key: string]: any } {
 
         return this._cSqlite
-            .selectPreDefinedQuery('SelectLimitOne', this._packageName)
+            .selPreQuery('SelectLimitOne', this._packageName)
             .reduce((prev: { [key: string]: any }, curr: { [key: string]: any }) => {
                 return {...prev, ...curr};
             }, {});
@@ -43,7 +43,7 @@ class cPackage implements iPackage {
     public toArray(): { [column: string]: any }[] {
 
         return this._cSqlite
-            .selectPreDefinedQuery('SelectLimitOne', this._packageName)
+            .selPreQuery('SelectLimitOne', this._packageName)
             .reduce((prev: any[], obj: { [column: string]: any }) => {
 
                 Object.keys(obj).forEach((key: string) => {

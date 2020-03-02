@@ -16,10 +16,10 @@ class cDocument implements iDocument {
         this._package       = packageName || this._cSqlite.packageName();
 
         this._cSqlite
-            .createTable(this._package);
+            .exePreQuery('CreateTable', this._package);
 
         this._cSqlite
-            .addColumn(this._package, this._documentName);
+            .exePreQuery('AlterTableAddColumn', this._package, this._documentName);
     }
 
     public merge(json: {}): this { return this; }
@@ -28,16 +28,21 @@ class cDocument implements iDocument {
 
     public toJson(): object | null {
         return JSON.parse(
-            this._cSqlite.getColumnValue(this._package, this._documentName)[0][this._documentName]
+            this._cSqlite.selPreQuery(
+                'SelectLimitOne',
+                this._package,
+                this._documentName
+            )[0][this._documentName]
         )
     }
 
     public append<T extends { [key: string]: any; }>(json: T): boolean {
-
-        return this._cSqlite.insertIntoColumn(
+        return this._cSqlite.exePreQuery(
+            'InsertIntoTable',
             this._package,
             this._documentName,
-            JSON.stringify(json));
+            JSON.stringify(json)
+        );
     }
 
     public removeKey(key: string): boolean { return true;}

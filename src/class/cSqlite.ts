@@ -36,7 +36,7 @@ class cSqlite extends aSqliteNode {
         })[preQueryType];
     }
 
-    public selectPreDefinedQuery(
+    public selPreQuery(
         preQueryType: queryKey,
         table: string = super.packageName(),
         column: string = super.documentName(),
@@ -58,7 +58,7 @@ class cSqlite extends aSqliteNode {
         return [];
     }
 
-    public executePreDefiniedQuery(
+    public exePreQuery(
         preQueryType: queryKey,
         table: string = super.packageName(),
         column: string = super.documentName(),
@@ -334,55 +334,6 @@ class cSqlite extends aSqliteNode {
             (typeof value === 'number' && `${value}`)
         })`;
     };
-
-    public getColumnNames(table: string): iTableInfo[] | [] {
-        try {
-            return super.Select(
-                super.databaseName(),
-                this.getQuery('GetColumnNames', table)
-            );
-        } catch (e) {
-            return [];
-        }
-    }
-
-    public getAllColumns(table: string): { [column: string]: any}[] {
-        try {
-            return super.Select(
-                super.databaseName(),
-                this.getQuery('GetAllColumns', table)
-            );
-        } catch(e) {
-            return [{}];
-        }
-    }
-
-    public insertIntoColumn(table: string, column: string, value: string): boolean {
-        try {
-        super.Execute(
-            super.databaseName(),
-            this.getQuery('InsertIntoColumn', table, column, value)
-        );
-
-        return true;
-        } catch(e) {
-            return false;
-        }
-    }
-
-    public getColumnValue(table: string, column: string): {[key: string]: any}[] {
-        try {
-            return super.Select(
-                super.databaseName(),
-                this.getQuery('GetColumnValue', table, column)
-            );
-        } catch(e) {
-            return [{}];
-        }
-    }
-
-    
-
 }
 
 export { cSqlite }
