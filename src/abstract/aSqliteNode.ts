@@ -4,15 +4,15 @@ import * as sqliteBridge from '../addon/sqlitebridge';
 class aSqliteNode implements iSqliteNode, iSqliteNode {
     constructor() {}
 
-    public databaseName(): string {
+    public static databaseName(): string {
         return 'sandra.db';
     }
 
-    public packageName(): string {
+    public static packageName(): string {
         return 'package';
     }
 
-    public documentName(): string {
+    public static documentName(): string {
         return 'document';
     }
 

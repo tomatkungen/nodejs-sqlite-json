@@ -1,14 +1,4 @@
 import { aSqliteNode } from "../abstract/aSqliteNode";
-import { iTableInfo } from "../interface/iStructure";
-
-export type queryKey =  'Unknown' |
-                        'CreateTable' |
-                        'AlterTableAddColumn' | 
-                        'PragmaInfo' |
-                        'SelectLimitOne' |
-                        'InsertIntoTable';
-
-
 
 class cSqlite extends aSqliteNode {
     
@@ -20,67 +10,33 @@ class cSqlite extends aSqliteNode {
         this._queryBuild = [];
     }
 
-    private preDefeinedQuery(
-        preQueryType: queryKey,
-        table: string = super.packageName(),
-        column: string = super.documentName(),
-        value: string = ""
-    ): { queryType: string, query: string } {
-        return ({
-            'Unknown'               : { queryType: 'execute',   query: ''},
-            'CreateTable'           : { queryType: 'execute',   query: this.f_createTable(table , column).f_buildRawQuery() },
-            'AlterTableAddColumn'   : { queryType: 'execute',   query: this.f_alterTableAddColumn(table,`${column} json`).f_buildRawQuery() },
-            'PragmaInfo'            : { queryType: 'select',    query: this.f_pragmaInfo(table ).f_buildRawQuery() },
-            'SelectLimitOne'        : { queryType: 'select',    query: this.f_Select().f_ResultColumns(column).f_From(table).f_limit(1).f_buildRawQuery()},
-            'InsertIntoTable'       : { queryType: 'execute',   query: this.f_insertIntoTable(table, [column], [value]).f_buildRawQuery() },
-        })[preQueryType];
-    }
-
-    public selPreQuery(
-        preQueryType: queryKey,
-        table: string = super.packageName(),
-        column: string = super.documentName(),
-        value: string = ""
+    public selectQuery(
+        query: string
     ): { [column: string]: any}[] {
-        const preQuery = this.preDefeinedQuery(preQueryType, table, column, value);
-
-        if (preQuery.queryType === 'select') {
-            try {
-                return super.Select(
-                    super.databaseName(),
-                    preQuery.query
-                )
-            } catch(e) {
-                return [];
-            }
+        try {
+            return super.Select(
+                cSqlite.databaseName(),
+                query
+            )
+        } catch(e) {
+            return [];
         }
-
-        return [];
     }
 
-    public exePreQuery(
-        preQueryType: queryKey,
-        table: string = super.packageName(),
-        column: string = super.documentName(),
-        value: string = ""
-    ): any {    
-        const preQuery = this.preDefeinedQuery(preQueryType, table, column, value);
+    public executeQuery(
+        query: string
+    ): boolean {
+        try {
+            super.Execute(
+                cSqlite.databaseName(),
+                query
+            );
 
-        if (preQuery.queryType === 'exexute') {
-            try {
-                super.Execute(
-                    super.databaseName(),
-                    preQuery.query
-                );
-
-                return true;
-            } catch(e) {
-                console.log(e);
-                return false;
-            }
+            return true;
+        } catch(e) {
+            console.log(e);
+            return false;
         }
-    
-        return false;
     }
 
     private addQuery(syntaxQuery: string): cSqlite {
@@ -161,16 +117,21 @@ class cSqlite extends aSqliteNode {
         return this;
     }
 
-    public f_alterTableAddColumn(table: string, columnDefinition: string): cSqlite {
+    public f_alterTableAddColumn(table: string): cSqlite {
         this.initQuery()
             .addQuery('ALTER TABLE')
             .addSpace()
             .addQuery(table)
-            .addSpace()
+
+        return this;
+    }
+
+    public f_AddColumn(columnDefinition: string): cSqlite {
+        this.addSpace()
             .addQuery('ADD COLUMN')
             .addSpace()
             .addQuery(columnDefinition);
-    
+
         return this;
     }
 
@@ -204,6 +165,37 @@ class cSqlite extends aSqliteNode {
             .addRightParenthes()
 
         return this;
+    }
+
+    public f_updateTable(table: string): cSqlite {
+        this.initQuery()
+            .addQuery('UPDATE')
+            .addSpace()
+            .addQuery(table);
+
+        return this;
+    }
+
+    public f_setColumn(column: string, expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('SET')
+            .addSpace()
+            .addQuery(column)
+            .addSpace()
+            .addQuery('=')
+            .addSpace()
+            .addQuery(expr);
+
+            return this;
+    }
+
+    public f_whereExpr(expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('WHERE')
+            .addSpace()
+            .addQuery(expr);
+
+            return this;
     }
 
     /**
@@ -276,17 +268,25 @@ class cSqlite extends aSqliteNode {
         return `json_patch('${JSON.stringify(json1)}', '${JSON.stringify(json2)}')`;
     };
 
+    public f_json_patch_colum(json: { [key: string] : any}, column: string): string {
+        return `json_patch(${column}', '${JSON.stringify(json)}')`;
+    }
+
     /**
      * json_remove([0,1,2,3,4], '$[2]', '$[0]') => "json_remove('[0,1,2,3,4]','$[2]')"
      */
     public f_json_remove(json: { [key: string] : any} | any[], ...path: string[]): string {
         return `json_remove('${JSON.stringify(json)}', ${
-            path.map((path) => {
-                return `'${path}'`;
-            }).join(', ')
+            path.map((path) => (`'$.${path}'`)).join(', ')
         })`;
     };
     
+    public f_json_remove_columns(column: string, ...path: string[]): string {
+        return `json_remove(${column}, ${
+            path.map((path) => (`'$.${path}'`)).join(', ')
+        })`;
+    }
+
     /**
      * json_replace({"a":2,"c":4}, '$.a', 99) => "json_replace('{"a":2,"c":4}', '$.a', 99)" 
      */

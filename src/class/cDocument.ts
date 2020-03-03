@@ -5,52 +5,103 @@ import { cSqlite } from "./cSqlite";
 
 class cDocument implements iDocument {
 
-    private _package: string;
+    private _packageName: string;
     private _documentName: string;
     private _cSqlite: cSqlite;
 
     constructor(documentName: string, packageName?: string) {
         this._cSqlite       = new cSqlite();
 
-        this._documentName  = documentName || this._cSqlite.databaseName();
-        this._package       = packageName || this._cSqlite.packageName();
+        this._documentName  = documentName || cSqlite.databaseName();
+        this._packageName   = packageName || cSqlite.packageName();
 
+        // Create table
         this._cSqlite
-            .exePreQuery('CreateTable', this._package);
+            .executeQuery(
+                this._cSqlite
+                    .f_createTable(this._packageName , this._documentName)
+                    .f_buildRawQuery()
+            );
 
+        // Add Column to table
         this._cSqlite
-            .exePreQuery('AlterTableAddColumn', this._package, this._documentName);
+            .executeQuery(
+                this._cSqlite
+                    .f_alterTableAddColumn(this._packageName)
+                    .f_AddColumn(`${this._documentName} json`)
+                    .f_buildRawQuery()
+            );
     }
 
-    public merge(json: {}): this { return this; }
-
-    public document(documentName: string): this { return this;}
+    public merge<T extends { [key: string]: any; }>(json: T): boolean {
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
+                    this._cSqlite.f_json_patch_colum(json, this._documentName)
+                ).f_buildRawQuery()
+        );
+    }
 
     public toJson(): object | null {
         return JSON.parse(
-            this._cSqlite.selPreQuery(
-                'SelectLimitOne',
-                this._package,
-                this._documentName
+            this._cSqlite.selectQuery(
+                this._cSqlite
+                    .f_Select()
+                    .f_ResultColumns(this._documentName)
+                    .f_From(this._packageName)
+                    .f_limit(1)
+                    .f_buildRawQuery()
             )[0][this._documentName]
         )
     }
 
     public append<T extends { [key: string]: any; }>(json: T): boolean {
-        return this._cSqlite.exePreQuery(
-            'InsertIntoTable',
-            this._package,
-            this._documentName,
-            JSON.stringify(json)
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_insertIntoTable(
+                    this._packageName,
+                    [this._documentName],
+                    [JSON.stringify(json)]
+                )
+                .f_buildRawQuery()
         );
     }
 
-    public removeKey(key: string): boolean { return true;}
+    public removeProperty(property: string): boolean { 
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
+                    this._cSqlite
+                        .f_json_remove_columns(
+                        this._documentName,
+                        property
+                    )
+                )
+                .f_buildRawQuery()
+        );
+    }
 
-    public removeKeys(keys: string[]): boolean { return true;}
+    public removePropertys(...propertys: string[]): boolean { 
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
+                    this._cSqlite
+                        .f_json_remove_columns(
+                            this._documentName,
+                            ...propertys
+                        )
+                ).f_buildRawQuery()
+        );
+    }
 
-    public property(key: string): cProperty {
-        return new cProperty(key, []);
+    public property(property: string): cProperty {
+        return new cProperty(property, []);
     }
 }
 

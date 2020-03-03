@@ -5,27 +5,38 @@ import { cSqlite } from "./cSqlite";
 class cPackage implements iPackage {
 
     private _packageName: string;
+    private _documentName: string;
+
     private _cSqlite: cSqlite;
 
     constructor(packageName: string) {
-        this._packageName   = packageName;
+        this._documentName  = cSqlite.databaseName();
+        this._packageName   = packageName || cSqlite.packageName();
+
         this._cSqlite       = new cSqlite();
 
         this._cSqlite
-            .exePreQuery(
-                'CreateTable',
-                this._packageName
+            .executeQuery(
+                this._cSqlite
+                    .f_createTable(
+                        this._packageName,
+                        this._documentName
+                    )
+                    .f_buildRawQuery()
             );
     }
 
-    public add(documentName: string): cPackage { 
+    public add(...documentName: string[]): cPackage {
 
-        this._cSqlite
-            .exePreQuery(
-                'InsertIntoTable',
-                this._packageName,
-                documentName
-            );
+        documentName.forEach((docName: string ) => {
+            this._cSqlite
+                .executeQuery(
+                    this._cSqlite
+                        .f_alterTableAddColumn(this._packageName)
+                        .f_AddColumn(`${docName} json`)
+                        .f_buildRawQuery()
+                );
+        });
 
         return this; 
     }
@@ -33,7 +44,14 @@ class cPackage implements iPackage {
     public toJson(): { [key: string]: any } {
 
         return this._cSqlite
-            .selPreQuery('SelectLimitOne', this._packageName)
+            .selectQuery(
+                this._cSqlite
+                    .f_Select()
+                    .f_ResultColumns('*')
+                    .f_From(this._packageName)
+                    .f_limit(1)
+                    .f_buildRawQuery()
+            )
             .reduce((prev: { [key: string]: any }, curr: { [key: string]: any }) => {
                 return {...prev, ...curr};
             }, {});
@@ -43,7 +61,14 @@ class cPackage implements iPackage {
     public toArray(): { [column: string]: any }[] {
 
         return this._cSqlite
-            .selPreQuery('SelectLimitOne', this._packageName)
+            .selectQuery(
+                this._cSqlite
+                    .f_Select()
+                    .f_ResultColumns('*')
+                    .f_From(this._packageName)
+                    .f_limit(1)
+                    .f_buildRawQuery()
+            )
             .reduce((prev: any[], obj: { [column: string]: any }) => {
 
                 Object.keys(obj).forEach((key: string) => {
@@ -57,7 +82,7 @@ class cPackage implements iPackage {
     }
 
     public document(documentName: string): cDocument {
-        return new cDocument(documentName, this._packageName);
+        return new cDocument(( documentName || this._documentName ), this._packageName);
     }
 
 }

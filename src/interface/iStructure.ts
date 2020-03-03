@@ -3,19 +3,18 @@ import { cPackage } from "../class/cPackage";
 import { cProperty } from "../class/cProperty";
 
 interface iDocument {
-    merge<T extends {}>(json: T): this;
-    document(documentName: string): this;
+    merge<T extends {}>(json: T): boolean;
     toJson(): object | null;
-    append<T extends { [key: string ]: any }>(json: T): boolean;
+    append<T extends { [property: string ]: any }>(json: T): boolean;
 
-    removeKey(key: string): boolean;
-    removeKeys(keys: string[]): boolean;
+    removeProperty(property: string): boolean;
+    removePropertys(...propertys: string[]): boolean;
 
-    property(key: string): iProperty;
+    property(property: string): cProperty;
 };
 
 interface iPackage {
-    add(documentName: string): cPackage;
+    add(...documentName: string[]): cPackage;
     toJson(): object;
     toArray(): Array<object>;
     document(documentName: string): cDocument;
@@ -24,15 +23,15 @@ interface iPackage {
 type tValueType = 'object' | 'array' | 'integer' | 'real' | 'true' | 'false' | 'null' | 'text' | 'NULL';
 
 interface iProperty {
-    Property(key: string): cProperty;
+    Property(property: string): cProperty;
 
     value(): any;
     insert<T extends {}>(json: T): boolean;
     replace<T extends {}>(json: T): boolean;
     set<T extends {}>(json: T): boolean;
 
-    removeKey(key: string): boolean;
-    removeKeys(keys: string[]): boolean;
+    removeKey(property: string): boolean;
+    removeKeys(propertys: string[]): boolean;
 
     removeAtIndex(index: number): boolean;
     removeAtIndexs(indexs: number[]): boolean;
@@ -61,19 +60,11 @@ interface iSqliteNode {
     Select(database: string, rawQuery: string): any;
 }
 
-interface iTableInfo {
-    cid: number;
-    name: string;
-    type: string;
-    notnull: number;
-}
-
 export {
     iDocument,
     iPackage,
     tValueType,
     iSqliteNode,
     iSqlite,
-    iTableInfo,
     iProperty
 };
