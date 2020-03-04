@@ -155,7 +155,7 @@ class cSqlite extends aSqliteNode {
     }
     // INSERT INTO table (column1,column2 ,..) VALUES( value1,    value2 ,...);
 
-    public f_pragmaInfo(table: string): cSqlite {    
+    public f_pragmaInfo(table: string): cSqlite {
         this.initQuery()
             .addQuery('PRAGMA')
             .addSpace()

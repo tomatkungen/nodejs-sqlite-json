@@ -101,7 +101,7 @@ class cDocument implements iDocument {
     }
 
     public property(property: string): cProperty {
-        return new cProperty(property, []);
+        return new cProperty(property);
     }
 }
 

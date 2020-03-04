@@ -11,6 +11,15 @@ var sqliteBridge = __importStar(require("../addon/sqlitebridge"));
 var aSqliteNode = (function () {
     function aSqliteNode() {
     }
+    aSqliteNode.databaseName = function () {
+        return 'sandra.db';
+    };
+    aSqliteNode.packageName = function () {
+        return 'package';
+    };
+    aSqliteNode.documentName = function () {
+        return 'document';
+    };
     aSqliteNode.prototype.Version = function () {
         return sqliteBridge.Version();
     };

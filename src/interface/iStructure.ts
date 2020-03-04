@@ -1,6 +1,7 @@
 import { cDocument } from "../class/cDocument";
 import { cPackage } from "../class/cPackage";
 import { cProperty } from "../class/cProperty";
+import { cSqlite } from "../class/cSqlite";
 
 interface iDocument {
     merge<T extends {}>(json: T): boolean;
@@ -15,8 +16,8 @@ interface iDocument {
 
 interface iPackage {
     add(...documentName: string[]): cPackage;
-    toJson(): object;
-    toArray(): Array<object>;
+    toJson(): { [key: string]: any };
+    toArray(): { [column: string]: any }[];
     document(documentName: string): cDocument;
 }
 
@@ -39,6 +40,20 @@ interface iProperty {
 }
 
 interface iSqlite {
+    f_buildRawQuery(): string;
+    f_Select(): cSqlite;
+    f_ResultColumns(...columns: string[]): cSqlite;
+    f_From(table: string): cSqlite;
+    f_limit(upperBound: number): cSqlite;
+    f_createTable(table: string, ...columns: string[]): cSqlite;
+    f_alterTableAddColumn(table: string): cSqlite;
+    f_AddColumn(columnDefinition: string): cSqlite;
+    f_insertIntoTable(table: string, columns: string[], values: string[]): cSqlite;
+    f_pragmaInfo(table: string): cSqlite;
+    f_updateTable(table: string): cSqlite;
+    f_setColumn(column: string, expr: string): cSqlite;
+    f_whereExpr(expr: string): cSqlite;
+
     f_json(json: { [key: string] : any }): string;
     f_json_array(...args: ((string | number | null)[])): string;
     f_json_array_length(json: { [key: string]: any} | any[], path?: string): string;
@@ -46,7 +61,9 @@ interface iSqlite {
     f_json_insert(json: { [key: string]: any} | any[], path: string, value: any): string;
     f_json_object(json: { [key: string] : any}): string;
     f_json_patch(json1: { [key: string] : any}, json2: { [key: string] : any}): string;
+    f_json_patch_colum(json: { [key: string] : any}, column: string): string;
     f_json_remove(json: { [key: string] : any} | any[], ...path: string[]): string;
+    f_json_remove_columns(column: string, ...path: string[]): string;
     f_json_replace(json: { [key: string]: any} | any[], path: string, value: any): string;
     f_json_set(json: { [key: string]: any} | any[], path: string, value: any): string;
     f_json_type(json: { [key: string]: any}, path: string): string;
