@@ -14,12 +14,14 @@ class cSqlite extends aSqliteNode implements iSqlite {
     public selectQuery(
         query: string
     ): { [column: string]: any}[] {
+        console.log(query);
         try {
             return super.Select(
                 cSqlite.databaseName(),
                 query
             )
         } catch(e) {
+            console.log(e);
             return [];
         }
     }
@@ -27,6 +29,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
     public executeQuery(
         query: string
     ): boolean {
+        console.log(query);
         try {
             super.Execute(
                 cSqlite.databaseName(),
@@ -65,7 +68,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
     }
 
     private getQuery(): string {
-        return this._queryBuild.join();
+        return this._queryBuild.join('');
     }
 
     private initQuery(): cSqlite {
@@ -98,6 +101,8 @@ class cSqlite extends aSqliteNode implements iSqlite {
 
     public f_From(table: string): cSqlite {
         this.addSpace()
+            .addQuery('FROM')
+            .addSpace()
             .addQuery(table);
         
         return this;
@@ -114,11 +119,13 @@ class cSqlite extends aSqliteNode implements iSqlite {
 
     public f_createTable(table: string, ...columns: string[]): cSqlite {
         this.initQuery()
-            .addQuery('CREATE TABLE IF NOT EXIST')
+            .addQuery('CREATE TABLE IF NOT EXISTS')
             .addSpace()
             .addQuery(table)
             .addSpace()
-            .addQuery(columns.join(', '));
+            .addLeftParenthes()
+            .addQuery(columns.join(', '))
+            .addRightParenthes();
 
         return this;
     }
@@ -156,7 +163,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
 
     public f_values(...values: string[]): cSqlite {
         this.addSpace()
-            .addQuery('VALUE')
+            .addQuery('VALUES')
             .addSpace()
             .addLeftParenthes()
             .addQuery(values.join(', '))
@@ -307,7 +314,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
     };
 
     public f_json_patch_colum(json: { [key: string] : any}, column: string): string {
-        return `json_patch(${column}', '${JSON.stringify(json)}')`;
+        return `json_patch(${column}, '${JSON.stringify(json)}')`;
     }
 
     /**

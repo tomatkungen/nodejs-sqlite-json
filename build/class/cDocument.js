@@ -16,12 +16,7 @@ var cDocument = (function () {
         this._packageName = packageName || cSqlite_1.cSqlite.packageName();
         this._cSqlite
             .executeQuery(this._cSqlite
-            .f_createTable(this._packageName, this._documentName)
-            .f_buildRawQuery());
-        this._cSqlite
-            .executeQuery(this._cSqlite
-            .f_alterTableAddColumn(this._packageName)
-            .f_AddColumn(this._documentName + " json")
+            .f_createTable(this._packageName, this._documentName + " json")
             .f_buildRawQuery());
     }
     cDocument.prototype.merge = function (json) {
@@ -30,16 +25,19 @@ var cDocument = (function () {
             .f_setColumn(this._documentName, this._cSqlite.f_json_patch_colum(json, this._documentName)).f_buildRawQuery());
     };
     cDocument.prototype.toJson = function () {
-        return JSON.parse(this._cSqlite.selectQuery(this._cSqlite
+        var select = this._cSqlite.selectQuery(this._cSqlite
             .f_Select(this._documentName)
             .f_From(this._packageName)
             .f_limit(1)
-            .f_buildRawQuery())[0][this._documentName]);
+            .f_buildRawQuery());
+        return (Array.isArray(select) && select.length === 0 ?
+            null :
+            select[0][this._documentName]);
     };
     cDocument.prototype.append = function (json) {
         return this._cSqlite.executeQuery(this._cSqlite
             .f_insertIntoTable(this._packageName, this._documentName)
-            .f_values(JSON.stringify(json))
+            .f_values("'" + JSON.stringify(json) + "'")
             .f_buildRawQuery());
     };
     cDocument.prototype.removeProperty = function (property) {

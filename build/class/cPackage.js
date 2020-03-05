@@ -20,7 +20,7 @@ var cPackage = (function () {
         this._cSqlite = new cSqlite_1.cSqlite();
         this._cSqlite
             .executeQuery(this._cSqlite
-            .f_createTable(this._packageName, this._documentName)
+            .f_createTable(this._packageName, this._documentName + " json")
             .f_buildRawQuery());
     }
     cPackage.prototype.add = function () {

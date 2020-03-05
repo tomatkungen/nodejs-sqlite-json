@@ -22,14 +22,17 @@ var cSqlite = (function (_super) {
         return _this;
     }
     cSqlite.prototype.selectQuery = function (query) {
+        console.log(query);
         try {
             return _super.prototype.Select.call(this, cSqlite.databaseName(), query);
         }
         catch (e) {
+            console.log(e);
             return [];
         }
     };
     cSqlite.prototype.executeQuery = function (query) {
+        console.log(query);
         try {
             _super.prototype.Execute.call(this, cSqlite.databaseName(), query);
             return true;
@@ -56,7 +59,7 @@ var cSqlite = (function (_super) {
         return this;
     };
     cSqlite.prototype.getQuery = function () {
-        return this._queryBuild.join();
+        return this._queryBuild.join('');
     };
     cSqlite.prototype.initQuery = function () {
         this._queryBuild = [];
@@ -86,6 +89,8 @@ var cSqlite = (function (_super) {
     };
     cSqlite.prototype.f_From = function (table) {
         this.addSpace()
+            .addQuery('FROM')
+            .addSpace()
             .addQuery(table);
         return this;
     };
@@ -102,11 +107,13 @@ var cSqlite = (function (_super) {
             columns[_i - 1] = arguments[_i];
         }
         this.initQuery()
-            .addQuery('CREATE TABLE IF NOT EXIST')
+            .addQuery('CREATE TABLE IF NOT EXISTS')
             .addSpace()
             .addQuery(table)
             .addSpace()
-            .addQuery(columns.join(', '));
+            .addLeftParenthes()
+            .addQuery(columns.join(', '))
+            .addRightParenthes();
         return this;
     };
     cSqlite.prototype.f_alterTableAddColumn = function (table) {
@@ -144,7 +151,7 @@ var cSqlite = (function (_super) {
             values[_i] = arguments[_i];
         }
         this.addSpace()
-            .addQuery('VALUE')
+            .addQuery('VALUES')
             .addSpace()
             .addLeftParenthes()
             .addQuery(values.join(', '))
@@ -246,7 +253,7 @@ var cSqlite = (function (_super) {
     };
     ;
     cSqlite.prototype.f_json_patch_colum = function (json, column) {
-        return "json_patch(" + column + "', '" + JSON.stringify(json) + "')";
+        return "json_patch(" + column + ", '" + JSON.stringify(json) + "')";
     };
     cSqlite.prototype.f_json_remove = function (json) {
         var path = [];

@@ -20,7 +20,7 @@ class cPackage implements iPackage {
                 this._cSqlite
                     .f_createTable(
                         this._packageName,
-                        this._documentName
+                        `${this._documentName} json`
                     )
                     .f_buildRawQuery()
             );

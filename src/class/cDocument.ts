@@ -15,20 +15,13 @@ class cDocument implements iDocument {
         this._documentName  = documentName || cSqlite.databaseName();
         this._packageName   = packageName || cSqlite.packageName();
 
-        // Create table
+        // Create table with default json column
         this._cSqlite
             .executeQuery(
                 this._cSqlite
-                    .f_createTable(this._packageName , this._documentName)
-                    .f_buildRawQuery()
-            );
-
-        // Add Column to table
-        this._cSqlite
-            .executeQuery(
-                this._cSqlite
-                    .f_alterTableAddColumn(this._packageName)
-                    .f_AddColumn(`${this._documentName} json`)
+                    .f_createTable(
+                        this._packageName,
+                        `${this._documentName} json`)
                     .f_buildRawQuery()
             );
     }
@@ -45,22 +38,28 @@ class cDocument implements iDocument {
     }
 
     public toJson(): object | null {
-        return JSON.parse(
-            this._cSqlite.selectQuery(
+        const select = this._cSqlite.selectQuery(
                 this._cSqlite
                     .f_Select(this._documentName)
                     .f_From(this._packageName)
                     .f_limit(1)
                     .f_buildRawQuery()
-            )[0][this._documentName]
-        )
+            );
+
+        return (
+            Array.isArray(select) && select.length === 0 ?
+            null :
+            select[0][this._documentName]
+        );
     }
 
     public append<T extends { [key: string]: any; }>(json: T): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
                 .f_insertIntoTable(this._packageName, this._documentName)
-                .f_values(JSON.stringify(json))
+                .f_values(
+                    `'${JSON.stringify(json)}'`
+                )
                 .f_buildRawQuery()
         );
     }
