@@ -1,37 +1,140 @@
 import { tValueType, iProperty } from "../interface/iStructure";
+import { cSqlite } from "./cSqlite";
 
 class cProperty implements iProperty {
 
+    private _packageName: string;
+    private _documentName: string;
     private _property: string;
+    private _cSqlite: cSqlite;
 
-    constructor(property: string) {
+    constructor(property: string, documentName: string, packageName: string) {
+        this._cSqlite = new cSqlite();
+
+        this._packageName = packageName;
+        this._documentName = documentName;
         this._property = property;
     }
 
     public Property(property: string) {
-        return new cProperty(`${this._property}.${property}`);
+        return new cProperty(
+            `${this._property}.${property}`,
+            this._packageName,
+            this._documentName
+        );
     }
 
-    public value(): any {
-        
-        return '';
+    public value(): { [key: string]: any } {
+        return this._cSqlite.selectQuery(
+            this._cSqlite
+                .f_Select(
+                    this._cSqlite
+                        .f_json_extract_column(
+                            this._documentName,
+                            this._property
+                        )
+                )
+                .f_From(this._packageName)
+                .f_buildRawQuery()
+        );
     }
 
-    public insert<T extends {}>(json: T): boolean { return true; }
+    public insert<T extends {}>(json: T): boolean {
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_insertIntoTable(this._packageName, this._documentName)
+                .f_values(
+                    this._cSqlite.f_json_insert_column(
+                        this._documentName,
+                        this._property,
+                        json
+                    )
+                ).f_buildRawQuery()
+        );
 
-    public replace<T extends {}>(json: T): boolean { return true; }
+    }
 
-    public set<T extends {}>(json: T): boolean { return true; }
+    public replace<T extends {}>(json: T): boolean { 
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_insertIntoTable(this._packageName, this._property)
+                .f_values(
+                    this._cSqlite
+                        .f_json_replace_column(
+                            this._documentName,
+                            this._property,
+                            json
+                        )
+                ).f_buildRawQuery()
+        );
+    }
 
-    public removeKey(property: string): boolean { return true; }
+    public set<T extends {}>(json: T): boolean {
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_insertIntoTable(this._packageName, this._property)
+                .f_values(
+                    this._cSqlite
+                        .f_json_set_column(
+                            this._documentName,
+                            this._property,
+                            json
+                        )
+                ).f_buildRawQuery()
+        );
+    }
 
-    public removeKeys(property: string[]): boolean { return true; }
+    public removeKey(property: string): boolean {
+        return this.removeKeys(property);
+    }
 
-    public removeAtIndex(index: number): boolean { return true; }
+    public removeKeys(...propertys: string[]): boolean {
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_insertIntoTable(this._packageName, this._documentName)
+                .f_values(
+                    this._cSqlite.f_json_remove_columns(
+                        this._documentName,
+                        ...propertys
+                    )
+                )
+                .f_buildRawQuery()
+        );
+    }
 
-    public removeAtIndexs(index: number[]): boolean { return true; }
+    public removeAtIndex(index: number): boolean {
+        return this.removeAtIndexs(index);
+    }
 
-    public valueType(): tValueType { return 'object'; }
+    public removeAtIndexs(...indexes: number[]): boolean {
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_insertIntoTable(this._packageName, this._documentName)
+                .f_values(
+                    this._cSqlite.f_json_remove_columns(
+                        this._documentName,
+                        ...indexes
+                    )
+                )
+                .f_buildRawQuery()
+        );
+     }
+
+    public valueType(): tValueType {
+        return this._cSqlite.selectQuery(
+            this._cSqlite
+                .f_Select(
+                    this._cSqlite
+                    .f_json_type_column(
+                        this._documentName,
+                        this._property
+                    )
+                )
+                .f_as('TYPE')
+            .f_From(this._packageName)
+            .f_buildRawQuery()
+        )[0]['TYPE'];
+    }
 
 }
 

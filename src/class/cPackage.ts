@@ -28,7 +28,7 @@ class cPackage implements iPackage {
 
     public add(...documentName: string[]): cPackage {
 
-        documentName.forEach((docName: string ) => {
+        documentName.forEach((docName: string) => {
             this._cSqlite
                 .executeQuery(
                     this._cSqlite
@@ -46,8 +46,7 @@ class cPackage implements iPackage {
         return this._cSqlite
             .selectQuery(
                 this._cSqlite
-                    .f_Select()
-                    .f_ResultColumns('*')
+                    .f_Select('*')
                     .f_From(this._packageName)
                     .f_limit(1)
                     .f_buildRawQuery()
@@ -63,8 +62,7 @@ class cPackage implements iPackage {
         return this._cSqlite
             .selectQuery(
                 this._cSqlite
-                    .f_Select()
-                    .f_ResultColumns('*')
+                    .f_Select('*')
                     .f_From(this._packageName)
                     .f_limit(1)
                     .f_buildRawQuery()

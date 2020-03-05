@@ -1,6 +1,7 @@
 import { aSqliteNode } from "../abstract/aSqliteNode";
+import { iSqlite } from "../interface/iStructure";
 
-class cSqlite extends aSqliteNode {
+class cSqlite extends aSqliteNode implements iSqlite {
     
     private _queryBuild: (string | number)[];
 
@@ -77,16 +78,20 @@ class cSqlite extends aSqliteNode {
         return this.getQuery();
     };
 
-    public f_Select(): cSqlite {
+    public f_Select(...columns: string[]): cSqlite {
         this.initQuery()
             .addQuery('SELECT')
+            .addSpace()
+            .addQuery(columns.join(', '));
 
         return this;
     }
 
-    public f_ResultColumns(...columns: string[]): cSqlite {
+    public f_as(alias: string): cSqlite {
         this.addSpace()
-            .addQuery(columns.join(' ,'));
+            .addQuery('AS')
+            .addSpace()
+            .addQuery(alias);
 
         return this;
     }
@@ -99,7 +104,8 @@ class cSqlite extends aSqliteNode {
     }
 
     public f_limit(upperBound: number): cSqlite {
-        this.addQuery('limit')
+        this.addSpace()
+            .addQuery('LIMIT')
             .addSpace()
             .addQuery(`${upperBound}`);
 
@@ -135,7 +141,7 @@ class cSqlite extends aSqliteNode {
         return this;
     }
 
-    public f_insertIntoTable(table: string, columns: string[], values: string[]): cSqlite {
+    public f_insertIntoTable(table: string, ...columns: string[]): cSqlite {
         this.initQuery()
             .addQuery('INSERT INTO')
             .addSpace()
@@ -144,7 +150,12 @@ class cSqlite extends aSqliteNode {
             .addLeftParenthes()
             .addQuery(columns.join(', '))
             .addRightParenthes()
-            .addSpace()
+
+        return this;
+    }
+
+    public f_values(...values: string[]): cSqlite {
+        this.addSpace()
             .addQuery('VALUE')
             .addSpace()
             .addLeftParenthes()
@@ -222,8 +233,12 @@ class cSqlite extends aSqliteNode {
      * json_array_length([1,2,3,4])         => "json_array_length('[1,2,3,4]')" 
      * json_array_length([1,2,3,4], '$')    => "json_array_length('[1,2,3,4]', '$')" 
      */
-    public f_json_array_length(json: { [key: string]: any} | any[], path?: string) : string {
-        return `json_array_length('${JSON.stringify(json)}' ${path ? `,' ${path}'` : ''})`;
+    public f_json_array_length(json: { [key: string]: any} | any[], path?: number | string) : string {
+        return `json_array_length('${JSON.stringify(json)}'${
+            path && typeof path === 'string' && `, '$.${path}'`  ||
+            path && typeof path === 'number' && `, '$[${path}]'` ||
+            ''
+        })`;
     }
 
     /**
@@ -231,27 +246,50 @@ class cSqlite extends aSqliteNode {
      * json_extract({"a":2,"c":[4,5,{"f":7}]}, '$')   => "json_extract('{"a":2,"c":[4,5,{"f":7}]}', '$')"
      */
     public f_json_extract(json: { [key: string]: any}, ...paths: string[]): string {
-        return `json_extract('${JSON.stringify(json)}'${paths ? `, '${
-            paths.map((path: string) => (path)).join('.')
-        }'` : ''})`;
+        return `json_extract('${JSON.stringify(json)}', '${
+            paths.map((path) => (
+                typeof path === 'string' && `'$.${path}'` ||
+                typeof path === 'number' && `'$[${path}]'`
+            )).join(', ')
+        }'`;
+    }
+
+    public f_json_extract_column(column: string, ...paths: string[]): string {
+        return `json_extract(${column}, '$.${
+            paths.map((path) => (
+                typeof path === 'string' && `'$.${path}'` ||
+                typeof path === 'number' && `'$[${path}]'`
+            )).join(', ')
+        }'`;
     }
 
     /**
      * json_insert([1,2,3,4],'$[#]',99)   => "json_insert('[1,2,3,4]','$[#]',99)"  
      */
-    public f_json_insert(json: { [key: string]: any} | any[], path: string, value: any): string {
-        return `json_insert(${JSON.stringify(json)}, ${path}, ${
-            (typeof value === 'string' && value) ||
-            (typeof value === 'number' && value) ||
-            (typeof value === 'boolean' && `${value}`) ||
-            JSON.stringify(value)
+    public f_json_insert(json: { [key: string]: any} | any[], path: string, value: any[]): string {
+        return `json_insert(${JSON.stringify(json)}, '$.${path}', ${
+            (typeof value === 'string'  && value)             ||
+            (typeof value === 'number'  && value)             ||
+            (typeof value === 'boolean' && `${value}`)        ||
+            (Array.isArray(value))      && `json('${value}')` ||
+            `JSON('${JSON.stringify(value)})'`
+        })`;
+    }
+
+    public f_json_insert_column(column: string, path: string, value: any): string {
+        return `json_insert(${column}, '$.${path}', ${
+            (typeof value === 'string'  && value)             ||
+            (typeof value === 'number'  && value)             ||
+            (typeof value === 'boolean' && `${value}`)        ||
+            (Array.isArray(value))      && `json('${value}')` ||
+            `'${JSON.stringify(value)}'`
         })`;
     }
 
     /**
      * json_object('a',2,'c','{e:5}') => "json_object('a',2,'c','{e:5}')"
      */
-    public f_json_object(json: { [key: string] : any}): string { 
+    public f_json_object(json: { [key: string]: (string | number)}): string {
         return `json_object(${
             Object.keys(json).reduce((ary: any[], key) => {
                 ary.push(`'${key}'`);
@@ -277,13 +315,19 @@ class cSqlite extends aSqliteNode {
      */
     public f_json_remove(json: { [key: string] : any} | any[], ...path: string[]): string {
         return `json_remove('${JSON.stringify(json)}', ${
-            path.map((path) => (`'$.${path}'`)).join(', ')
+            path.map((path) => (
+                typeof path === 'string' && `'$.${path}'` ||
+                typeof path === 'number' && `'$[${path}]'`
+            )).join(', ')
         })`;
     };
     
-    public f_json_remove_columns(column: string, ...path: string[]): string {
+    public f_json_remove_columns(column: string, ...path: (string | number)[]): string {
         return `json_remove(${column}, ${
-            path.map((path) => (`'$.${path}'`)).join(', ')
+            path.map((path) => (
+                typeof path === 'string' && `'$.${path}'` ||
+                typeof path === 'number' && `'$[${path}]'`
+            )).join(', ')
         })`;
     }
 
@@ -291,11 +335,22 @@ class cSqlite extends aSqliteNode {
      * json_replace({"a":2,"c":4}, '$.a', 99) => "json_replace('{"a":2,"c":4}', '$.a', 99)" 
      */
     public f_json_replace(json: { [key: string]: any} | any[], path: string, value: any): string { 
-        return `json_replace(${JSON.stringify(json)}, ${path}, ${
-            (typeof value === 'string' && value) ||
-            (typeof value === 'number' && value) ||
-            (typeof value === 'boolean' && `${value}`) ||
-            JSON.stringify(value)
+        return `json_replace(${JSON.stringify(json)}, '$.${path}', ${
+            (typeof value === 'string'  && value)             ||
+            (typeof value === 'number'  && value)             ||
+            (typeof value === 'boolean' && `${value}`)        ||
+            (Array.isArray(value))      && `json('${value}')` ||
+            `'${JSON.stringify(value)}'`
+        })`;
+    }
+
+    public f_json_replace_column(column: string, path: string, value: any): string {
+        return `json_replace(${column}, '$.${path}', ${
+            (typeof value === 'string'  && value)             ||
+            (typeof value === 'number'  && value)             ||
+            (typeof value === 'boolean' && `${value}`)        ||
+            (Array.isArray(value))      && `json('${value}')` ||
+            `'${JSON.stringify(value)}'`
         })`;
     }
 
@@ -303,7 +358,17 @@ class cSqlite extends aSqliteNode {
      * json_set({"a":2,"c":4}, '$.c', [97,96]) => "json_set('{"a":2,"c":4}', '$.c', [97,96])"
      */
     public f_json_set(json: { [key: string]: any} | any[], path: string, value: any): string {
-        return `json_set('${JSON.stringify(json)}', ${path}, ${
+        return `json_set('${JSON.stringify(json)}', '$.${path}', ${
+            (typeof value === 'string'  && value)             ||
+            (typeof value === 'number'  && value)             ||
+            (typeof value === 'boolean' && `${value}`)        ||
+            (Array.isArray(value))      && `json('${value}')` ||
+            `'${JSON.stringify(value)}'`
+        })`;
+    }
+
+    public f_json_set_column(column: string, path: string, value: any): string {
+        return `json_set('${column}', '$.${path}', ${
             (typeof value === 'string' && value) ||
             (typeof value === 'number' && value) ||
             (typeof value === 'boolean' && `${value}`) ||
@@ -315,8 +380,12 @@ class cSqlite extends aSqliteNode {
      * json_type({"a":[2,3.5,true,false,null,"x"]},'$.a[0]') => "json_type('{"a":[2,3.5,true,false,null,"x"]}', '$.a[0]')"
      */
     public f_json_type(json: { [key: string]: any}, path: string): string {
-        return `json_type('${JSON.stringify(json)}', '${path}')`;
+        return `json_type('${JSON.stringify(json)}', '$.${path}')`;
     };
+
+    public f_json_type_column(column: string, path: string): string {
+        return `json_type(${column}, '$.${path}')`;
+    }
 
     /**
      * json_valid({"x":35}) => "json_valid('{"x":35}')"

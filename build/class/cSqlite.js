@@ -67,17 +67,21 @@ var cSqlite = (function (_super) {
     };
     ;
     cSqlite.prototype.f_Select = function () {
-        this.initQuery()
-            .addQuery('SELECT');
-        return this;
-    };
-    cSqlite.prototype.f_ResultColumns = function () {
         var columns = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             columns[_i] = arguments[_i];
         }
+        this.initQuery()
+            .addQuery('SELECT')
+            .addSpace()
+            .addQuery(columns.join(', '));
+        return this;
+    };
+    cSqlite.prototype.f_as = function (alias) {
         this.addSpace()
-            .addQuery(columns.join(' ,'));
+            .addQuery('AS')
+            .addSpace()
+            .addQuery(alias);
         return this;
     };
     cSqlite.prototype.f_From = function (table) {
@@ -86,7 +90,8 @@ var cSqlite = (function (_super) {
         return this;
     };
     cSqlite.prototype.f_limit = function (upperBound) {
-        this.addQuery('limit')
+        this.addSpace()
+            .addQuery('LIMIT')
             .addSpace()
             .addQuery("" + upperBound);
         return this;
@@ -118,7 +123,11 @@ var cSqlite = (function (_super) {
             .addQuery(columnDefinition);
         return this;
     };
-    cSqlite.prototype.f_insertIntoTable = function (table, columns, values) {
+    cSqlite.prototype.f_insertIntoTable = function (table) {
+        var columns = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            columns[_i - 1] = arguments[_i];
+        }
         this.initQuery()
             .addQuery('INSERT INTO')
             .addSpace()
@@ -126,8 +135,15 @@ var cSqlite = (function (_super) {
             .addSpace()
             .addLeftParenthes()
             .addQuery(columns.join(', '))
-            .addRightParenthes()
-            .addSpace()
+            .addRightParenthes();
+        return this;
+    };
+    cSqlite.prototype.f_values = function () {
+        var values = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            values[_i] = arguments[_i];
+        }
+        this.addSpace()
             .addQuery('VALUE')
             .addSpace()
             .addLeftParenthes()
@@ -183,20 +199,39 @@ var cSqlite = (function (_super) {
             arg); }) + ")";
     };
     cSqlite.prototype.f_json_array_length = function (json, path) {
-        return "json_array_length('" + JSON.stringify(json) + "' " + (path ? ",' " + path + "'" : '') + ")";
+        return "json_array_length('" + JSON.stringify(json) + "'" + (path && typeof path === 'string' && ", '$." + path + "'" ||
+            path && typeof path === 'number' && ", '$[" + path + "]'" ||
+            '') + ")";
     };
     cSqlite.prototype.f_json_extract = function (json) {
         var paths = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             paths[_i - 1] = arguments[_i];
         }
-        return "json_extract('" + JSON.stringify(json) + "'" + (paths ? ", '" + paths.map(function (path) { return (path); }).join('.') + "'" : '') + ")";
+        return "json_extract('" + JSON.stringify(json) + "', '" + paths.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
+            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + "'";
+    };
+    cSqlite.prototype.f_json_extract_column = function (column) {
+        var paths = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            paths[_i - 1] = arguments[_i];
+        }
+        return "json_extract(" + column + ", '$." + paths.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
+            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + "'";
     };
     cSqlite.prototype.f_json_insert = function (json, path, value) {
-        return "json_insert(" + JSON.stringify(json) + ", " + path + ", " + ((typeof value === 'string' && value) ||
+        return "json_insert(" + JSON.stringify(json) + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
             (typeof value === 'number' && value) ||
             (typeof value === 'boolean' && "" + value) ||
-            JSON.stringify(value)) + ")";
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "JSON('" + JSON.stringify(value) + ")'") + ")";
+    };
+    cSqlite.prototype.f_json_insert_column = function (column, path, value) {
+        return "json_insert(" + column + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
+            (typeof value === 'number' && value) ||
+            (typeof value === 'boolean' && "" + value) ||
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "'" + JSON.stringify(value) + "'") + ")";
     };
     cSqlite.prototype.f_json_object = function (json) {
         return "json_object(" + Object.keys(json).reduce(function (ary, key) {
@@ -218,7 +253,8 @@ var cSqlite = (function (_super) {
         for (var _i = 1; _i < arguments.length; _i++) {
             path[_i - 1] = arguments[_i];
         }
-        return "json_remove('" + JSON.stringify(json) + "', " + path.map(function (path) { return ("'$." + path + "'"); }).join(', ') + ")";
+        return "json_remove('" + JSON.stringify(json) + "', " + path.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
+            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + ")";
     };
     ;
     cSqlite.prototype.f_json_remove_columns = function (column) {
@@ -226,24 +262,43 @@ var cSqlite = (function (_super) {
         for (var _i = 1; _i < arguments.length; _i++) {
             path[_i - 1] = arguments[_i];
         }
-        return "json_remove(" + column + ", " + path.map(function (path) { return ("'$." + path + "'"); }).join(', ') + ")";
+        return "json_remove(" + column + ", " + path.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
+            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + ")";
     };
     cSqlite.prototype.f_json_replace = function (json, path, value) {
-        return "json_replace(" + JSON.stringify(json) + ", " + path + ", " + ((typeof value === 'string' && value) ||
+        return "json_replace(" + JSON.stringify(json) + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
             (typeof value === 'number' && value) ||
             (typeof value === 'boolean' && "" + value) ||
-            JSON.stringify(value)) + ")";
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "'" + JSON.stringify(value) + "'") + ")";
+    };
+    cSqlite.prototype.f_json_replace_column = function (column, path, value) {
+        return "json_replace(" + column + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
+            (typeof value === 'number' && value) ||
+            (typeof value === 'boolean' && "" + value) ||
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "'" + JSON.stringify(value) + "'") + ")";
     };
     cSqlite.prototype.f_json_set = function (json, path, value) {
-        return "json_set('" + JSON.stringify(json) + "', " + path + ", " + ((typeof value === 'string' && value) ||
+        return "json_set('" + JSON.stringify(json) + "', '$." + path + "', " + ((typeof value === 'string' && value) ||
+            (typeof value === 'number' && value) ||
+            (typeof value === 'boolean' && "" + value) ||
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "'" + JSON.stringify(value) + "'") + ")";
+    };
+    cSqlite.prototype.f_json_set_column = function (column, path, value) {
+        return "json_set('" + column + "', '$." + path + "', " + ((typeof value === 'string' && value) ||
             (typeof value === 'number' && value) ||
             (typeof value === 'boolean' && "" + value) ||
             JSON.stringify(value)) + ")";
     };
     cSqlite.prototype.f_json_type = function (json, path) {
-        return "json_type('" + JSON.stringify(json) + "', '" + path + "')";
+        return "json_type('" + JSON.stringify(json) + "', '$." + path + "')";
     };
     ;
+    cSqlite.prototype.f_json_type_column = function (column, path) {
+        return "json_type(" + column + ", '$." + path + "')";
+    };
     cSqlite.prototype.f_json_valid = function (json) {
         return "json_valid('" + JSON.stringify(json) + "')";
     };

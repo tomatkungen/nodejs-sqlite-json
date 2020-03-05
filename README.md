@@ -44,15 +44,15 @@ nDocument.Document('<documentName>').merge('<Json>');
 
 // Remove Property in Json Class.Document
 nDocument.Document('<documentName>').removeProperty('<property>');
-nDocument.Document('<documentName>').removePropertys(['<property>', '<property>']);
+nDocument.Document('<documentName>').removePropertys('<property>', '<property>');
 
 // Remove Item at Index in Array Class.Document.Property
 nDocument.Document('<documentName>').Property('<property>').removeAtIndex('<number>');
-nDocument.Document('<documentName>').Property('<property>').removeAtIndexs(['<number>', '<number>']);
+nDocument.Document('<documentName>').Property('<property>').removeAtIndexs('<number>', '<number>');
 
 // Remove Property in Json Class.Document.property
 nDocument.Document('<documentName>').Property('<property>').removeProperty('<property>');
-nDocument.Document('<documentName>').Property('<property>').removePropertys(['<property>', '<property>']);
+nDocument.Document('<documentName>').Property('<property>').removePropertys('<property>', '<property>');
 
 // Return value type  <Object | Array | Integer | real | true | false | null | text | NULL>
 nDocument.Document('<documentName>').Property('<property>').valueType();

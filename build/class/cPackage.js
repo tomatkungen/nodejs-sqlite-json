@@ -41,8 +41,7 @@ var cPackage = (function () {
     cPackage.prototype.toJson = function () {
         return this._cSqlite
             .selectQuery(this._cSqlite
-            .f_Select()
-            .f_ResultColumns('*')
+            .f_Select('*')
             .f_From(this._packageName)
             .f_limit(1)
             .f_buildRawQuery())
@@ -53,8 +52,7 @@ var cPackage = (function () {
     cPackage.prototype.toArray = function () {
         return this._cSqlite
             .selectQuery(this._cSqlite
-            .f_Select()
-            .f_ResultColumns('*')
+            .f_Select('*')
             .f_From(this._packageName)
             .f_limit(1)
             .f_buildRawQuery())

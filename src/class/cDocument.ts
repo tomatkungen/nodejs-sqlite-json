@@ -48,8 +48,7 @@ class cDocument implements iDocument {
         return JSON.parse(
             this._cSqlite.selectQuery(
                 this._cSqlite
-                    .f_Select()
-                    .f_ResultColumns(this._documentName)
+                    .f_Select(this._documentName)
                     .f_From(this._packageName)
                     .f_limit(1)
                     .f_buildRawQuery()
@@ -60,11 +59,8 @@ class cDocument implements iDocument {
     public append<T extends { [key: string]: any; }>(json: T): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(
-                    this._packageName,
-                    [this._documentName],
-                    [JSON.stringify(json)]
-                )
+                .f_insertIntoTable(this._packageName, this._documentName)
+                .f_values(JSON.stringify(json))
                 .f_buildRawQuery()
         );
     }
@@ -101,7 +97,11 @@ class cDocument implements iDocument {
     }
 
     public property(property: string): cProperty {
-        return new cProperty(property);
+        return new cProperty(
+            property,
+            this._packageName,
+            this._documentName
+        );
     }
 }
 
