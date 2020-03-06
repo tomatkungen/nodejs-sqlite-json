@@ -1,0 +1,1 @@
+rm ./sandra.db & node ./build/test.js

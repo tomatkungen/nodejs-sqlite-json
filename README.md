@@ -48,7 +48,7 @@ nDocument.Document('<documentName>').removePropertys('<property>', '<property>')
 
 // Remove Item at Index in Array Class.Document.Property
 nDocument.Document('<documentName>').Property('<property>').removeAtIndex('<number>');
-nDocument.Document('<documentName>').Property('<property>').removeAtIndexs('<number>', '<number>');
+nDocument.Document('<documentName>').Property('<property>').removeAtIndexes('<number>', '<number>');
 
 // Remove Property in Json Class.Document.property
 nDocument.Document('<documentName>').Property('<property>').removeProperty('<property>');

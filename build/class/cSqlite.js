@@ -215,16 +215,16 @@ var cSqlite = (function (_super) {
         for (var _i = 1; _i < arguments.length; _i++) {
             paths[_i - 1] = arguments[_i];
         }
-        return "json_extract('" + JSON.stringify(json) + "', '" + paths.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
-            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + "'";
+        return "json_extract('" + JSON.stringify(json) + "', " + paths.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
+            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + ")'";
     };
     cSqlite.prototype.f_json_extract_column = function (column) {
         var paths = [];
         for (var _i = 1; _i < arguments.length; _i++) {
             paths[_i - 1] = arguments[_i];
         }
-        return "json_extract(" + column + ", '$." + paths.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
-            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + "'";
+        return "json_extract(" + column + ", " + paths.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
+            typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + ")";
     };
     cSqlite.prototype.f_json_insert = function (json, path, value) {
         return "json_insert(" + JSON.stringify(json) + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
@@ -272,6 +272,13 @@ var cSqlite = (function (_super) {
         return "json_remove(" + column + ", " + path.map(function (path) { return (typeof path === 'string' && "'$." + path + "'" ||
             typeof path === 'number' && "'$[" + path + "]'"); }).join(', ') + ")";
     };
+    cSqlite.prototype.f_json_remove_columns_property = function (column, property) {
+        var path = [];
+        for (var _i = 2; _i < arguments.length; _i++) {
+            path[_i - 2] = arguments[_i];
+        }
+        return "json_remove(" + column + ", " + path.map(function (path) { return (typeof path === 'number' && "'$." + property + "[" + path + "]'"); }).join(', ') + ")";
+    };
     cSqlite.prototype.f_json_replace = function (json, path, value) {
         return "json_replace(" + JSON.stringify(json) + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
             (typeof value === 'number' && value) ||
@@ -294,10 +301,11 @@ var cSqlite = (function (_super) {
             "'" + JSON.stringify(value) + "'") + ")";
     };
     cSqlite.prototype.f_json_set_column = function (column, path, value) {
-        return "json_set('" + column + "', '$." + path + "', " + ((typeof value === 'string' && value) ||
+        return "json_set(" + column + ", '$." + path + "', " + ((typeof value === 'string' && value) ||
             (typeof value === 'number' && value) ||
             (typeof value === 'boolean' && "" + value) ||
-            JSON.stringify(value)) + ")";
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "'" + JSON.stringify(value) + "'") + ")";
     };
     cSqlite.prototype.f_json_type = function (json, path) {
         return "json_type('" + JSON.stringify(json) + "', '$." + path + "')";

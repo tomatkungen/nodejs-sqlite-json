@@ -98,8 +98,8 @@ class cDocument implements iDocument {
     public property(property: string): cProperty {
         return new cProperty(
             property,
-            this._packageName,
-            this._documentName
+            this._documentName,
+            this._packageName
         );
     }
 }

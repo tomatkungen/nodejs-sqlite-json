@@ -25,7 +25,7 @@ class cProperty implements iProperty {
     }
 
     public value(): { [key: string]: any } {
-        return this._cSqlite.selectQuery(
+        const select = this._cSqlite.selectQuery(
             this._cSqlite
                 .f_Select(
                     this._cSqlite
@@ -34,20 +34,28 @@ class cProperty implements iProperty {
                             this._property
                         )
                 )
+                .f_as(this._documentName)
                 .f_From(this._packageName)
                 .f_buildRawQuery()
+        );
+
+        return (
+            Array.isArray(select) && select.length === 0 ?
+            null :
+            select[0][this._documentName]
         );
     }
 
     public insert<T extends {}>(json: T): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(this._packageName, this._documentName)
-                .f_values(
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
                     this._cSqlite.f_json_insert_column(
                         this._documentName,
                         this._property,
-                        json
+                        this._cSqlite.f_json(json)
                     )
                 ).f_buildRawQuery()
         );
@@ -57,13 +65,14 @@ class cProperty implements iProperty {
     public replace<T extends {}>(json: T): boolean { 
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(this._packageName, this._property)
-                .f_values(
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
                     this._cSqlite
                         .f_json_replace_column(
                             this._documentName,
                             this._property,
-                            json
+                            this._cSqlite.f_json(json)
                         )
                 ).f_buildRawQuery()
         );
@@ -72,27 +81,29 @@ class cProperty implements iProperty {
     public set<T extends {}>(json: T): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(this._packageName, this._property)
-                .f_values(
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
                     this._cSqlite
                         .f_json_set_column(
                             this._documentName,
                             this._property,
-                            json
+                            this._cSqlite.f_json(json)
                         )
                 ).f_buildRawQuery()
         );
     }
 
-    public removeKey(property: string): boolean {
-        return this.removeKeys(property);
+    public removeProperty(property: string): boolean {
+        return this.removePropertys(property);
     }
 
-    public removeKeys(...propertys: string[]): boolean {
+    public removePropertys(...propertys: string[]): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(this._packageName, this._documentName)
-                .f_values(
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
                     this._cSqlite.f_json_remove_columns(
                         this._documentName,
                         ...propertys
@@ -103,16 +114,18 @@ class cProperty implements iProperty {
     }
 
     public removeAtIndex(index: number): boolean {
-        return this.removeAtIndexs(index);
+        return this.removeAtIndexes(index);
     }
 
-    public removeAtIndexs(...indexes: number[]): boolean {
+    public removeAtIndexes(...indexes: number[]): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(this._packageName, this._documentName)
-                .f_values(
-                    this._cSqlite.f_json_remove_columns(
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
+                    this._cSqlite.f_json_remove_columns_property(
                         this._documentName,
+                        this._property,
                         ...indexes
                     )
                 )

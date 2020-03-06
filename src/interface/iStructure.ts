@@ -31,11 +31,11 @@ interface iProperty {
     replace<T extends {}>(json: T): boolean;
     set<T extends {}>(json: T): boolean;
 
-    removeKey(property: string): boolean;
-    removeKeys(...propertys: string[]): boolean
+    removeProperty(property: string): boolean;
+    removePropertys(...propertys: string[]): boolean
 
     removeAtIndex(index: number): boolean;
-    removeAtIndexs(...index: number[]): boolean;
+    removeAtIndexes(...index: number[]): boolean;
     valueType(): tValueType;
 }
 

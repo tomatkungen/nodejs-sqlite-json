@@ -253,21 +253,21 @@ class cSqlite extends aSqliteNode implements iSqlite {
      * json_extract({"a":2,"c":[4,5,{"f":7}]}, '$')   => "json_extract('{"a":2,"c":[4,5,{"f":7}]}', '$')"
      */
     public f_json_extract(json: { [key: string]: any}, ...paths: string[]): string {
-        return `json_extract('${JSON.stringify(json)}', '${
+        return `json_extract('${JSON.stringify(json)}', ${
             paths.map((path) => (
                 typeof path === 'string' && `'$.${path}'` ||
                 typeof path === 'number' && `'$[${path}]'`
             )).join(', ')
-        }'`;
+        })'`;
     }
 
     public f_json_extract_column(column: string, ...paths: string[]): string {
-        return `json_extract(${column}, '$.${
+        return `json_extract(${column}, ${
             paths.map((path) => (
                 typeof path === 'string' && `'$.${path}'` ||
                 typeof path === 'number' && `'$[${path}]'`
             )).join(', ')
-        }'`;
+        })`;
     }
 
     /**
@@ -338,6 +338,14 @@ class cSqlite extends aSqliteNode implements iSqlite {
         })`;
     }
 
+    public f_json_remove_columns_property(column: string, property: string, ...path: number[]): string {
+        return `json_remove(${column}, ${
+            path.map((path) => (
+                typeof path === 'number' && `'$.${property}[${path}]'`
+            )).join(', ')
+        })`;
+    }
+
     /**
      * json_replace({"a":2,"c":4}, '$.a', 99) => "json_replace('{"a":2,"c":4}', '$.a', 99)" 
      */
@@ -375,11 +383,12 @@ class cSqlite extends aSqliteNode implements iSqlite {
     }
 
     public f_json_set_column(column: string, path: string, value: any): string {
-        return `json_set('${column}', '$.${path}', ${
-            (typeof value === 'string' && value) ||
-            (typeof value === 'number' && value) ||
-            (typeof value === 'boolean' && `${value}`) ||
-            JSON.stringify(value)
+        return `json_set(${column}, '$.${path}', ${
+            (typeof value === 'string' && value)                ||
+            (typeof value === 'number' && value)                ||
+            (typeof value === 'boolean' && `${value}`)          ||
+            (Array.isArray(value))      && `json('${value}')`   ||
+            `'${JSON.stringify(value)}'`
         })`;
     }
 

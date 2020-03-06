@@ -58,7 +58,7 @@ var cDocument = (function () {
             .f_setColumn(this._documentName, (_a = this._cSqlite).f_json_remove_columns.apply(_a, __spreadArrays([this._documentName], propertys))).f_buildRawQuery());
     };
     cDocument.prototype.property = function (property) {
-        return new cProperty_1.cProperty(property, this._packageName, this._documentName);
+        return new cProperty_1.cProperty(property, this._documentName, this._packageName);
     };
     return cDocument;
 }());
