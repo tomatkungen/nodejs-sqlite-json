@@ -10,7 +10,7 @@ class cPackage implements iPackage {
     private _cSqlite: cSqlite;
 
     constructor(packageName: string) {
-        this._documentName  = cSqlite.databaseName();
+        this._documentName  = cSqlite.documentName();
         this._packageName   = packageName || cSqlite.packageName();
 
         this._cSqlite       = new cSqlite();
@@ -52,6 +52,7 @@ class cPackage implements iPackage {
                     .f_buildRawQuery()
             )
             .reduce((prev: { [key: string]: any }, curr: { [key: string]: any }) => {
+                Object.keys(curr).forEach((key: string) => { curr[key] = JSON.parse(curr[key]); });
                 return {...prev, ...curr};
             }, {});
 
@@ -71,7 +72,7 @@ class cPackage implements iPackage {
 
                 Object.keys(obj).forEach((key: string) => {
                     let newObj: { [column: string]: any } = {};
-                    newObj[key] = obj[key];
+                    newObj[key] = JSON.parse(obj[key]);
                     prev.push(newObj);
                 });
 
@@ -79,7 +80,7 @@ class cPackage implements iPackage {
             }, []);
     }
 
-    public document(documentName: string): cDocument {
+    public Document(documentName: string): cDocument {
         return new cDocument(( documentName || this._documentName ), this._packageName);
     }
 

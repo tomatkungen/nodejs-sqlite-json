@@ -90,5 +90,5 @@ nDocument.Package('<PackageName>').toJson();
 nDocument.Package('<PackageName>').toArray();
 
 // Return Class.Document
-nDocument.Package('<PackageName>').document('<DocumentName>');
+nDocument.Package('<PackageName>').Document('<DocumentName>');
 ```

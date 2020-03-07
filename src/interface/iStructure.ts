@@ -18,7 +18,7 @@ interface iPackage {
     add(...documentName: string[]): cPackage;
     toJson(): { [key: string]: any };
     toArray(): { [column: string]: any }[];
-    document(documentName: string): cDocument;
+    Document(documentName: string): cDocument;
 }
 
 type tValueType = 'object' | 'array' | 'integer' | 'real' | 'true' | 'false' | 'null' | 'text' | 'NULL';

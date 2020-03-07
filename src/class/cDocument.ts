@@ -49,7 +49,7 @@ class cDocument implements iDocument {
         return (
             Array.isArray(select) && select.length === 0 ?
             null :
-            select[0][this._documentName]
+            JSON.parse(select[0][this._documentName])
         );
     }
 

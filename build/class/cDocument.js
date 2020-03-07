@@ -32,7 +32,7 @@ var cDocument = (function () {
             .f_buildRawQuery());
         return (Array.isArray(select) && select.length === 0 ?
             null :
-            select[0][this._documentName]);
+            JSON.parse(select[0][this._documentName]));
     };
     cDocument.prototype.append = function (json) {
         return this._cSqlite.executeQuery(this._cSqlite

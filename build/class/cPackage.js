@@ -15,7 +15,7 @@ var cDocument_1 = require("./cDocument");
 var cSqlite_1 = require("./cSqlite");
 var cPackage = (function () {
     function cPackage(packageName) {
-        this._documentName = cSqlite_1.cSqlite.databaseName();
+        this._documentName = cSqlite_1.cSqlite.documentName();
         this._packageName = packageName || cSqlite_1.cSqlite.packageName();
         this._cSqlite = new cSqlite_1.cSqlite();
         this._cSqlite
@@ -46,6 +46,7 @@ var cPackage = (function () {
             .f_limit(1)
             .f_buildRawQuery())
             .reduce(function (prev, curr) {
+            Object.keys(curr).forEach(function (key) { curr[key] = JSON.parse(curr[key]); });
             return __assign(__assign({}, prev), curr);
         }, {});
     };
@@ -59,13 +60,13 @@ var cPackage = (function () {
             .reduce(function (prev, obj) {
             Object.keys(obj).forEach(function (key) {
                 var newObj = {};
-                newObj[key] = obj[key];
+                newObj[key] = JSON.parse(obj[key]);
                 prev.push(newObj);
             });
             return prev;
         }, []);
     };
-    cPackage.prototype.document = function (documentName) {
+    cPackage.prototype.Document = function (documentName) {
         return new cDocument_1.cDocument((documentName || this._documentName), this._packageName);
     };
     return cPackage;
