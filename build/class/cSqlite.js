@@ -22,23 +22,23 @@ var cSqlite = (function (_super) {
         return _this;
     }
     cSqlite.prototype.selectQuery = function (query) {
-        console.log(query);
+        console.log("> " + query);
         try {
             return _super.prototype.Select.call(this, cSqlite.databaseName(), query);
         }
         catch (e) {
-            console.log(e);
+            console.log("> " + e);
             return [];
         }
     };
     cSqlite.prototype.executeQuery = function (query) {
-        console.log(query);
+        console.log("> " + query);
         try {
             _super.prototype.Execute.call(this, cSqlite.databaseName(), query);
             return true;
         }
         catch (e) {
-            console.log(e);
+            console.log("> " + e);
             return false;
         }
     };

@@ -14,14 +14,14 @@ class cSqlite extends aSqliteNode implements iSqlite {
     public selectQuery(
         query: string
     ): { [column: string]: any}[] {
-        console.log(query);
+        console.log(`> ${query}`);
         try {
             return super.Select(
                 cSqlite.databaseName(),
                 query
             )
         } catch(e) {
-            console.log(e);
+            console.log(`> ${e}`);
             return [];
         }
     }
@@ -29,7 +29,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
     public executeQuery(
         query: string
     ): boolean {
-        console.log(query);
+        console.log(`> ${query}`);
         try {
             super.Execute(
                 cSqlite.databaseName(),
@@ -38,7 +38,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
 
             return true;
         } catch(e) {
-            console.log(e);
+            console.log(`> ${e}`);
             return false;
         }
     }
