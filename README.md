@@ -46,6 +46,12 @@ nDocument.Document('<documentName>').merge('<Json>');
 nDocument.Document('<documentName>').removeProperty('<property>');
 nDocument.Document('<documentName>').removePropertys('<property>', '<property>');
 
+// Insert Json at Beginning of Array by Class.Document.Property (Not implemented)
+nDocument.Document('<documentName>').Property('<property>').pushFront('<Json>');
+
+// Insert Json at Ent of Array by Class.Document.Property
+nDocument.Document('<documentName>').Property('<property>').pushEnd('<Json>');
+
 // Remove Item at Index in Array Class.Document.Property
 nDocument.Document('<documentName>').Property('<property>').removeAtIndex('<number>');
 nDocument.Document('<documentName>').Property('<property>').removeAtIndexes('<number>', '<number>');

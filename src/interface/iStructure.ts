@@ -34,6 +34,8 @@ interface iProperty {
     removeProperty(property: string): boolean;
     removePropertys(...propertys: string[]): boolean
 
+    pushEnd<T extends {}>(json: T): boolean;
+
     removeAtIndex(index: number): boolean;
     removeAtIndexes(...index: number[]): boolean;
     valueType(): tValueType;

@@ -60,6 +60,12 @@ var cProperty = (function () {
             .f_setColumn(this._documentName, (_a = this._cSqlite).f_json_remove_columns.apply(_a, __spreadArrays([this._documentName], propertys)))
             .f_buildRawQuery());
     };
+    cProperty.prototype.pushEnd = function (json) {
+        return this._cSqlite.executeQuery(this._cSqlite
+            .f_updateTable(this._packageName)
+            .f_setColumn(this._documentName, this._cSqlite.f_json_set_column_array_end(this._documentName, this._property, this._cSqlite.f_json(json)))
+            .f_buildRawQuery());
+    };
     cProperty.prototype.removeAtIndex = function (index) {
         return this.removeAtIndexes(index);
     };

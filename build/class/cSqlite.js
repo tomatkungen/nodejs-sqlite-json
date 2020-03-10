@@ -307,6 +307,13 @@ var cSqlite = (function (_super) {
             (Array.isArray(value)) && "json('" + value + "')" ||
             "'" + JSON.stringify(value) + "'") + ")";
     };
+    cSqlite.prototype.f_json_set_column_array_end = function (column, path, value) {
+        return "json_set(" + column + ", '$." + path + "[' || json_array_length(" + column + ", '$." + path + "') || ']', " + ((typeof value === 'string' && value) ||
+            (typeof value === 'number' && value) ||
+            (typeof value === 'boolean' && "" + value) ||
+            (Array.isArray(value)) && "json('" + value + "')" ||
+            "'" + JSON.stringify(value) + "'") + ")";
+    };
     cSqlite.prototype.f_json_type = function (json, path) {
         return "json_type('" + JSON.stringify(json) + "', '$." + path + "')";
     };

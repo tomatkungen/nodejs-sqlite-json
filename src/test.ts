@@ -135,4 +135,12 @@ console.log(`nDocument.Package('MyPackageName').Document('MyDocumentOne').proper
 console.log('', nDocument.Package('MyPackageName').Document('MyDocumentOne').property('toad').value());
 
 console.log('\n');
+console.log(`nDocument.Package('MyPackageName').Document('MyDocumentOne').property('toad').();`);
+nDocument.Package('MyPackageName').Document('MyDocumentOne').property('toad').pushEnd({ 'paddan': 1 });
+
+console.log('\n');
+console.log(`nDocument.Package('MyPackageName').Document('MyDocumentOne').property('toad').value()`);
+console.log('', nDocument.Package('MyPackageName').Document('MyDocumentOne').property('toad').value());
+
+console.log('\n');
 console.log('End Test');

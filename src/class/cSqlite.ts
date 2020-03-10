@@ -392,6 +392,18 @@ class cSqlite extends aSqliteNode implements iSqlite {
         })`;
     }
 
+    // json_SET(MyDocumentOne,'$.toad[' || json_array_length(MyDocumentOne, '$.toad') || ']', 44);
+
+    public f_json_set_column_array_end(column: string, path: string, value: any): string {
+        return `json_set(${column}, '$.${path}[' || json_array_length(${column}, '$.${path}') || ']', ${
+            (typeof value === 'string' && value)                ||
+            (typeof value === 'number' && value)                ||
+            (typeof value === 'boolean' && `${value}`)          ||
+            (Array.isArray(value))      && `json('${value}')`   ||
+            `'${JSON.stringify(value)}'`
+        })`;
+    }
+
     /**
      * json_type({"a":[2,3.5,true,false,null,"x"]},'$.a[0]') => "json_type('{"a":[2,3.5,true,false,null,"x"]}', '$.a[0]')"
      */

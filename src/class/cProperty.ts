@@ -113,6 +113,22 @@ class cProperty implements iProperty {
         );
     }
 
+    public pushEnd<T extends {}>(json: T): boolean {
+        return this._cSqlite.executeQuery(
+            this._cSqlite
+                .f_updateTable(this._packageName)
+                .f_setColumn(
+                    this._documentName,
+                    this._cSqlite.f_json_set_column_array_end(
+                        this._documentName,
+                        this._property,
+                        this._cSqlite.f_json(json)
+                    )
+                )
+                .f_buildRawQuery()
+        );
+    }
+
     public removeAtIndex(index: number): boolean {
         return this.removeAtIndexes(index);
     }
