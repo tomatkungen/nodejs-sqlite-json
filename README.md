@@ -5,7 +5,8 @@ Install
 * Version SQLite version 3.9.0 (2015-10-14) or higher
 * Nodejs version 8.5.x or higher
 
-### Create Document :)
+### Create Document
+
 
 ```Javascript
 /*
