@@ -1,6 +1,6 @@
 # sqlite3 Json1 Extension Wrapper for NodeJS
 
-Install
+Install :)
 
 * Version SQLite version 3.9.0 (2015-10-14) or higher
 * Nodejs version 8.5.x or higher
