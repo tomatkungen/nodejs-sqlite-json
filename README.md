@@ -5,20 +5,49 @@ Install
 * Version SQLite version 3.9.0 (2015-10-14) or higher
 * Nodejs version 8.5.x or higher
 
-### Create Document :)
+### Create Package Document
+
+```Javascript
+/*
+    Package
+
+    Class.Package
+
+    Return Class.Package
+ */
+nDocument.Package('<PackageName>')
+
+// Return Class.Package
+// Creates { <PackageName>: { <DocumentName1>: .., <DocumentName2>: .., ...} }
+nDocument.Package('<PackageName>')
+        .add('<DocumentName1>')
+        .add('<DocumentName2>', '<DocumentName3>')
+
+
+// Return value as Json { <d1>:..., <d2>:.. }
+nDocument.Package('<PackageName>').toJson();
+
+// Return value as Array [{d1}, {d2}...]
+nDocument.Package('<PackageName>').toArray();
+
+// Return Class.Document
+nDocument.Package('<PackageName>').Document('<DocumentName>');
+```
+
+### Create Document
 
 
 ```Javascript
 /*
     Document
 
-    Creates json structure
-    {
-        ...
-    }
+    Class.Document
 
-    @return Class.Document
+    Return Class.Document
 */
+nDocument.Document('<documentName>')
+
+// Append Json on document
 nDocument.Document('<documentName>').append('<Json>');
 
 // Return json from Class.Document
@@ -64,38 +93,4 @@ nDocument.Document('<documentName>').Property('<property>').removePropertys('<pr
 // Return value type  <Object | Array | Integer | real | true | false | null | text | NULL>
 nDocument.Document('<documentName>').Property('<property>').valueType();
 
-```
-
-### Create Package Document
-
-```Javascript
-/*
-    Class.Package
-
-    Creates json structure
-    {
-        <PackageName>: {
-           <DocumentName1> : ...
-           <DocumentName2> : ...
-           <DocumentName3> : ...
-        }
-    }
-
-    @return Class.Package
- */
-nDocument.Package('<PackageName>')
-        .add('<DocumentName1>')
-        .add('<DocumentName2>', '<DocumentName3>')
-
-// Return Class.Package
-nDocument.Package('<PackageName>')
-
-// Return value as Json { <d1>:..., <d2>:.. }
-nDocument.Package('<PackageName>').toJson();
-
-// Return value as Array [{d1}, {d2}...]
-nDocument.Package('<PackageName>').toArray();
-
-// Return Class.Document
-nDocument.Package('<PackageName>').Document('<DocumentName>');
 ```
