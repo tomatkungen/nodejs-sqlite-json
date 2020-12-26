@@ -7,6 +7,7 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cProperty = void 0;
 var cSqlite_1 = require("./cSqlite");
 var cProperty = (function () {
     function cProperty(property, documentName, packageName) {

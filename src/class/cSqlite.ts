@@ -134,7 +134,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
         this.initQuery()
             .addQuery('ALTER TABLE')
             .addSpace()
-            .addQuery(table)
+            .addQuery(table);
 
         return this;
     }
@@ -148,6 +148,19 @@ class cSqlite extends aSqliteNode implements iSqlite {
         return this;
     }
 
+    public f_insertOrIgnoreIntoTable(table: string, ...columns: string[]): cSqlite {
+        this.initQuery()
+            .addQuery('INSERT OR IGNORE INTO')
+            .addSpace()
+            .addQuery(table)
+            .addSpace()
+            .addLeftParenthes()
+            .addQuery(columns.join(', '))
+            .addRightParenthes();
+
+        return this;
+    }
+
     public f_insertIntoTable(table: string, ...columns: string[]): cSqlite {
         this.initQuery()
             .addQuery('INSERT INTO')
@@ -156,7 +169,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
             .addSpace()
             .addLeftParenthes()
             .addQuery(columns.join(', '))
-            .addRightParenthes()
+            .addRightParenthes();
 
         return this;
     }
@@ -167,20 +180,27 @@ class cSqlite extends aSqliteNode implements iSqlite {
             .addSpace()
             .addLeftParenthes()
             .addQuery(values.join(', '))
-            .addRightParenthes()
+            .addRightParenthes();
 
         return this;
     }
-    // INSERT INTO table (column1,column2 ,..) VALUES( value1,    value2 ,...);
 
-    public f_pragmaInfo(table: string): cSqlite {
-        this.initQuery()
-            .addQuery('PRAGMA')
+    public f_onConflictDo(...indexColumn: string[]): cSqlite {
+        this.addSpace()
+            .addQuery('ON CONFLICT')
             .addSpace()
-            .addQuery('table_info')
             .addLeftParenthes()
-            .addQuery(table)
+            .addQuery(indexColumn.join(' ,'))
             .addRightParenthes()
+            .addSpace()
+            .addQuery('DO');
+
+        return this;
+    }
+
+    public f_update(): cSqlite {
+        this.addSpace()
+            .addQuery('UPDATE');
 
         return this;
     }
@@ -214,6 +234,43 @@ class cSqlite extends aSqliteNode implements iSqlite {
             .addQuery(expr);
 
             return this;
+    }
+
+    public f_andExpr(expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('AND')
+            .addSpace()
+            .addQuery(expr);
+
+        return this;
+    }
+
+    public f_isNull(): cSqlite {
+        this.addSpace()
+            .addQuery('IS NULL')
+            .addSpace();
+
+        return this;
+    }
+
+    public f_isNotNull(): cSqlite {
+        this.addSpace()
+            .addQuery('IS NOT NULL')
+            .addSpace();
+
+        return this;
+    }
+
+    public f_pragmaInfo(table: string): cSqlite {
+        this.initQuery()
+            .addQuery('PRAGMA')
+            .addSpace()
+            .addQuery('table_info')
+            .addLeftParenthes()
+            .addQuery(table)
+            .addRightParenthes()
+
+        return this;
     }
 
     /**

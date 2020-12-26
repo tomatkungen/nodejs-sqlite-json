@@ -15,14 +15,15 @@ Install
 
     Return Class.Package
  */
-nDocument.Package('<PackageName>')
+nDocument.Package('<PackageName>');
+// or
+nDocument.Package('<PackageName>', '<DocumentName1>', '<DocumentName2>', ...);
 
 // Return Class.Package
 // Creates { <PackageName>: { <DocumentName1>: .., <DocumentName2>: .., ...} }
 nDocument.Package('<PackageName>')
         .add('<DocumentName1>')
         .add('<DocumentName2>', '<DocumentName3>')
-
 
 // Return value as Json { <d1>:..., <d2>:.. }
 nDocument.Package('<PackageName>').toJson();
@@ -45,9 +46,11 @@ nDocument.Package('<PackageName>').Document('<DocumentName>');
 
     Return Class.Document
 */
-nDocument.Document('<documentName>')
+nDocument.Document('<documentName>');
+// or 
+nDocument.Document('<documentName>', '<PackageName>');
 
-// Append Json on document
+// Append Json on document, No override if exist, append if not exist
 nDocument.Document('<documentName>').append('<Json>');
 
 // Return json from Class.Document

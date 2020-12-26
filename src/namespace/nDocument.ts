@@ -3,11 +3,11 @@ import { cPackage } from '../class/cPackage';
 
 namespace nDocument {
     
-    export const Package = (packageName: string) =>
-        (new cPackage(packageName));
+    export const Package = (packageName: string, ...documentNames: string[]) =>
+        (new cPackage(packageName, ...documentNames));
     
-     export const Document = (documentName: string) =>
-        (new cDocument(documentName));
+     export const Document = (documentName: string, packageName?: string) =>
+        (new cDocument(documentName, packageName));
 
 }
 

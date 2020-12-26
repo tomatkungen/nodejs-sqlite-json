@@ -21,12 +21,18 @@ declare class cSqlite extends aSqliteNode implements iSqlite {
     f_createTable(table: string, ...columns: string[]): cSqlite;
     f_alterTableAddColumn(table: string): cSqlite;
     f_AddColumn(columnDefinition: string): cSqlite;
+    f_insertOrIgnoreIntoTable(table: string, ...columns: string[]): cSqlite;
     f_insertIntoTable(table: string, ...columns: string[]): cSqlite;
     f_values(...values: string[]): cSqlite;
-    f_pragmaInfo(table: string): cSqlite;
+    f_onConflictDo(...indexColumn: string[]): cSqlite;
+    f_update(): cSqlite;
     f_updateTable(table: string): cSqlite;
     f_setColumn(column: string, expr: string): cSqlite;
     f_whereExpr(expr: string): cSqlite;
+    f_andExpr(expr: string): cSqlite;
+    f_isNull(): cSqlite;
+    f_isNotNull(): cSqlite;
+    f_pragmaInfo(table: string): cSqlite;
     f_json(json: {
         [key: string]: any;
     }): string;

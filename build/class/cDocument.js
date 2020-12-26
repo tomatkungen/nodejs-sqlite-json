@@ -7,17 +7,20 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
     return r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cDocument = void 0;
 var cProperty_1 = require("./cProperty");
 var cSqlite_1 = require("./cSqlite");
 var cDocument = (function () {
     function cDocument(documentName, packageName) {
+        var _a;
         this._cSqlite = new cSqlite_1.cSqlite();
         this._documentName = documentName || cSqlite_1.cSqlite.databaseName();
         this._packageName = packageName || cSqlite_1.cSqlite.packageName();
         this._cSqlite
-            .executeQuery(this._cSqlite
-            .f_createTable(this._packageName, this._documentName + " json")
-            .f_buildRawQuery());
+            .executeQuery((_a = this._cSqlite)
+            .f_createTable.apply(_a, __spreadArrays([this._packageName], __spreadArrays(cSqlite_1.cSqlite.columns(), [
+            this._documentName + " json"
+        ]))).f_buildRawQuery());
     }
     cDocument.prototype.merge = function (json) {
         return this._cSqlite.executeQuery(this._cSqlite
@@ -36,8 +39,14 @@ var cDocument = (function () {
     };
     cDocument.prototype.append = function (json) {
         return this._cSqlite.executeQuery(this._cSqlite
-            .f_insertIntoTable(this._packageName, this._documentName)
-            .f_values("'" + JSON.stringify(json) + "'")
+            .f_insertOrIgnoreIntoTable(this._packageName, cSqlite_1.cSqlite.idColumn(), this._documentName)
+            .f_values('1', "'" + JSON.stringify(json) + "'")
+            .f_onConflictDo(cSqlite_1.cSqlite.idColumn())
+            .f_update()
+            .f_setColumn(this._documentName, "'" + JSON.stringify(json) + "'")
+            .f_whereExpr(cSqlite_1.cSqlite.idColumn() + " = 1")
+            .f_andExpr(this._documentName)
+            .f_isNull()
             .f_buildRawQuery());
     };
     cDocument.prototype.removeProperty = function (property) {
@@ -55,7 +64,8 @@ var cDocument = (function () {
         }
         return this._cSqlite.executeQuery(this._cSqlite
             .f_updateTable(this._packageName)
-            .f_setColumn(this._documentName, (_a = this._cSqlite).f_json_remove_columns.apply(_a, __spreadArrays([this._documentName], propertys))).f_buildRawQuery());
+            .f_setColumn(this._documentName, (_a = this._cSqlite)
+            .f_json_remove_columns.apply(_a, __spreadArrays([this._documentName], propertys))).f_buildRawQuery());
     };
     cDocument.prototype.property = function (property) {
         return new cProperty_1.cProperty(property, this._documentName, this._packageName);

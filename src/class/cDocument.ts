@@ -21,8 +21,11 @@ class cDocument implements iDocument {
                 this._cSqlite
                     .f_createTable(
                         this._packageName,
-                        `${this._documentName} json`)
-                    .f_buildRawQuery()
+                        ...[
+                            ...cSqlite.columns(),
+                            `${this._documentName} json`
+                        ]
+                    ).f_buildRawQuery()
             );
     }
 
@@ -56,10 +59,21 @@ class cDocument implements iDocument {
     public append<T extends { [key: string]: any; }>(json: T): boolean {
         return this._cSqlite.executeQuery(
             this._cSqlite
-                .f_insertIntoTable(this._packageName, this._documentName)
+                .f_insertOrIgnoreIntoTable(
+                    this._packageName,
+                    cSqlite.idColumn(),
+                    this._documentName
+                )
                 .f_values(
+                    '1',
                     `'${JSON.stringify(json)}'`
                 )
+                .f_onConflictDo(cSqlite.idColumn())
+                .f_update()
+                .f_setColumn(this._documentName, `'${JSON.stringify(json)}'`)
+                .f_whereExpr(`${cSqlite.idColumn()} = 1`)
+                .f_andExpr(this._documentName)
+                .f_isNull()
                 .f_buildRawQuery()
         );
     }

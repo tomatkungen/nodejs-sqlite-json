@@ -9,7 +9,7 @@ class cPackage implements iPackage {
 
     private _cSqlite: cSqlite;
 
-    constructor(packageName: string) {
+    constructor(packageName: string, ...documentNames: string[]) {
         this._documentName  = cSqlite.documentName();
         this._packageName   = packageName || cSqlite.packageName();
 
@@ -20,7 +20,13 @@ class cPackage implements iPackage {
                 this._cSqlite
                     .f_createTable(
                         this._packageName,
-                        `${this._documentName} json`
+                        ...[
+                            ...cSqlite.columns(),
+                            `${this._documentName} json`,
+                            ...documentNames.map(
+                                (documentName) => `${documentName} json`
+                            )
+                        ]
                     )
                     .f_buildRawQuery()
             );
@@ -80,8 +86,8 @@ class cPackage implements iPackage {
             }, []);
     }
 
-    public Document(documentName: string): cDocument {
-        return new cDocument(( documentName || this._documentName ), this._packageName);
+    public Document(documentName: string = this._documentName): cDocument {
+        return new cDocument(documentName, this._packageName);
     }
 
 }

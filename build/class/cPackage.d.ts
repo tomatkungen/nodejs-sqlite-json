@@ -4,7 +4,7 @@ declare class cPackage implements iPackage {
     private _packageName;
     private _documentName;
     private _cSqlite;
-    constructor(packageName: string);
+    constructor(packageName: string, ...documentNames: string[]);
     add(...documentName: string[]): cPackage;
     toJson(): {
         [key: string]: any;
@@ -12,6 +12,6 @@ declare class cPackage implements iPackage {
     toArray(): {
         [column: string]: any;
     }[];
-    Document(documentName: string): cDocument;
+    Document(documentName?: string): cDocument;
 }
 export { cPackage };

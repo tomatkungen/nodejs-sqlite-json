@@ -16,6 +16,17 @@ class aSqliteNode implements iSqliteNode, iSqliteNode {
         return 'document';
     }
 
+    public static idColumn(): string {
+        return 'id';
+    }
+
+    public static columns(): string[] {
+        return [
+            'id INTEGER PRIMARY KEY AUTOINCREMENT',
+            // 'create NOT NULL DEFAULT CURRENT_TIMESTAMP'
+        ];
+    }
+
     public Version(): string {
         return sqliteBridge.Version();
     }

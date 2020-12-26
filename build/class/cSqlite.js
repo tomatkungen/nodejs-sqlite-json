@@ -3,7 +3,7 @@ var __extends = (this && this.__extends) || (function () {
     var extendStatics = function (d, b) {
         extendStatics = Object.setPrototypeOf ||
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
-            function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
         return extendStatics(d, b);
     };
     return function (d, b) {
@@ -13,6 +13,7 @@ var __extends = (this && this.__extends) || (function () {
     };
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cSqlite = void 0;
 var aSqliteNode_1 = require("../abstract/aSqliteNode");
 var cSqlite = (function (_super) {
     __extends(cSqlite, _super);
@@ -130,6 +131,21 @@ var cSqlite = (function (_super) {
             .addQuery(columnDefinition);
         return this;
     };
+    cSqlite.prototype.f_insertOrIgnoreIntoTable = function (table) {
+        var columns = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            columns[_i - 1] = arguments[_i];
+        }
+        this.initQuery()
+            .addQuery('INSERT OR IGNORE INTO')
+            .addSpace()
+            .addQuery(table)
+            .addSpace()
+            .addLeftParenthes()
+            .addQuery(columns.join(', '))
+            .addRightParenthes();
+        return this;
+    };
     cSqlite.prototype.f_insertIntoTable = function (table) {
         var columns = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -158,14 +174,24 @@ var cSqlite = (function (_super) {
             .addRightParenthes();
         return this;
     };
-    cSqlite.prototype.f_pragmaInfo = function (table) {
-        this.initQuery()
-            .addQuery('PRAGMA')
+    cSqlite.prototype.f_onConflictDo = function () {
+        var indexColumn = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            indexColumn[_i] = arguments[_i];
+        }
+        this.addSpace()
+            .addQuery('ON CONFLICT')
             .addSpace()
-            .addQuery('table_info')
             .addLeftParenthes()
-            .addQuery(table)
-            .addRightParenthes();
+            .addQuery(indexColumn.join(' ,'))
+            .addRightParenthes()
+            .addSpace()
+            .addQuery('DO');
+        return this;
+    };
+    cSqlite.prototype.f_update = function () {
+        this.addSpace()
+            .addQuery('UPDATE');
         return this;
     };
     cSqlite.prototype.f_updateTable = function (table) {
@@ -191,6 +217,35 @@ var cSqlite = (function (_super) {
             .addQuery('WHERE')
             .addSpace()
             .addQuery(expr);
+        return this;
+    };
+    cSqlite.prototype.f_andExpr = function (expr) {
+        this.addSpace()
+            .addQuery('AND')
+            .addSpace()
+            .addQuery(expr);
+        return this;
+    };
+    cSqlite.prototype.f_isNull = function () {
+        this.addSpace()
+            .addQuery('IS NULL')
+            .addSpace();
+        return this;
+    };
+    cSqlite.prototype.f_isNotNull = function () {
+        this.addSpace()
+            .addQuery('IS NOT NULL')
+            .addSpace();
+        return this;
+    };
+    cSqlite.prototype.f_pragmaInfo = function (table) {
+        this.initQuery()
+            .addQuery('PRAGMA')
+            .addSpace()
+            .addQuery('table_info')
+            .addLeftParenthes()
+            .addQuery(table)
+            .addRightParenthes();
         return this;
     };
     cSqlite.prototype.f_json = function (json) {
