@@ -156,8 +156,12 @@ console.log(`nDocument.Package('package_two');`);
 nDocument.Package('package_two');
 
 console.log('\n');
-console.log(`nDocument.Package('package_two').add('document_one').add('document_two');`);
-nDocument.Package('package_two').add('document_one').add('document_two');
+console.log(`nDocument.Package('package_two').add('document_one').add('document_two').add('document_three', 'document_four', 'document_five');`);
+nDocument.Package('package_two').add('document_one').add('document_two').add('document_three', 'document_four', 'document_five');
+
+console.log('\n');
+console.log(`nDocument.Package('package_two').add('document_one').add('document_two').add('document_three', 'document_four', 'document_five', 'document_six');`);
+nDocument.Package('package_two').add('document_one').add('document_two').add('document_three', 'document_four', 'document_five', 'document_six');
 
 console.log('\n');
 console.log(`nDocument.Package('package_two').Document('document_one').append({"mario":1,"luigi":2,"toad":[1,2,3],"princess":"1","kumba":2,"always":true})`);

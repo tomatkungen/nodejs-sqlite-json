@@ -70,7 +70,7 @@ var cSqlite = (function (_super) {
         return this.getQuery();
     };
     ;
-    cSqlite.prototype.f_Select = function () {
+    cSqlite.prototype.f_select = function () {
         var columns = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             columns[_i] = arguments[_i];
@@ -88,7 +88,7 @@ var cSqlite = (function (_super) {
             .addQuery(alias);
         return this;
     };
-    cSqlite.prototype.f_From = function (table) {
+    cSqlite.prototype.f_from = function (table) {
         this.addSpace()
             .addQuery('FROM')
             .addSpace()
@@ -124,7 +124,7 @@ var cSqlite = (function (_super) {
             .addQuery(table);
         return this;
     };
-    cSqlite.prototype.f_AddColumn = function (columnDefinition) {
+    cSqlite.prototype.f_addColumn = function (columnDefinition) {
         this.addSpace()
             .addQuery('ADD COLUMN')
             .addSpace()
@@ -246,6 +246,39 @@ var cSqlite = (function (_super) {
             .addLeftParenthes()
             .addQuery(table)
             .addRightParenthes();
+        return this;
+    };
+    cSqlite.prototype.f_caseExpr = function (expr) {
+        this.addSpace()
+            .addQuery('CASE')
+            .addSpace()
+            .addQuery(expr);
+        return this;
+    };
+    cSqlite.prototype.f_whenExpr = function (expr) {
+        this.addSpace()
+            .addQuery('WHEN')
+            .addSpace()
+            .addQuery(expr);
+        return this;
+    };
+    cSqlite.prototype.f_thenExpr = function (expr) {
+        this.addSpace()
+            .addQuery('THEN')
+            .addSpace()
+            .addQuery(expr);
+        return this;
+    };
+    cSqlite.prototype.f_elseExpr = function (expr) {
+        this.addSpace()
+            .addQuery('ELSE')
+            .addSpace()
+            .addQuery(expr);
+        return this;
+    };
+    cSqlite.prototype.f_end = function () {
+        this.addSpace()
+            .addQuery('END');
         return this;
     };
     cSqlite.prototype.f_json = function (json) {

@@ -14,13 +14,13 @@ declare class cSqlite extends aSqliteNode implements iSqlite {
     private getQuery;
     private initQuery;
     f_buildRawQuery(): string;
-    f_Select(...columns: string[]): cSqlite;
+    f_select(...columns: string[]): cSqlite;
     f_as(alias: string): cSqlite;
-    f_From(table: string): cSqlite;
+    f_from(table: string): cSqlite;
     f_limit(upperBound: number): cSqlite;
     f_createTable(table: string, ...columns: string[]): cSqlite;
     f_alterTableAddColumn(table: string): cSqlite;
-    f_AddColumn(columnDefinition: string): cSqlite;
+    f_addColumn(columnDefinition: string): cSqlite;
     f_insertOrIgnoreIntoTable(table: string, ...columns: string[]): cSqlite;
     f_insertIntoTable(table: string, ...columns: string[]): cSqlite;
     f_values(...values: string[]): cSqlite;
@@ -33,6 +33,11 @@ declare class cSqlite extends aSqliteNode implements iSqlite {
     f_isNull(): cSqlite;
     f_isNotNull(): cSqlite;
     f_pragmaInfo(table: string): cSqlite;
+    f_caseExpr(expr: string): cSqlite;
+    f_whenExpr(expr: string): cSqlite;
+    f_thenExpr(expr: string): cSqlite;
+    f_elseExpr(expr: string): cSqlite;
+    f_end(): cSqlite;
     f_json(json: {
         [key: string]: any;
     }): string;

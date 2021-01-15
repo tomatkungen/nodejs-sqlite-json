@@ -43,19 +43,18 @@ interface iProperty {
 
 interface iSqlite {
     f_buildRawQuery(): string;
-    f_Select(): cSqlite;
+    f_select(): cSqlite;
     f_as(alias: string): cSqlite;
-    f_From(table: string): cSqlite;
+    f_from(table: string): cSqlite;
     f_limit(upperBound: number): cSqlite;
     f_createTable(table: string, ...columns: string[]): cSqlite;
     f_alterTableAddColumn(table: string): cSqlite;
-    f_AddColumn(columnDefinition: string): cSqlite;
+    f_addColumn(columnDefinition: string): cSqlite;
+    f_insertOrIgnoreIntoTable(table: string, ...columns: string[]): cSqlite;
     f_insertIntoTable(table: string, ...columns: string[]): cSqlite;
     f_values(...values: string[]): cSqlite;
-    f_insertOrIgnoreIntoTable(table: string, ...columns: string[]): cSqlite;
     f_onConflictDo(...indexColumn: string[]): cSqlite;
     f_update(): cSqlite;
-    f_pragmaInfo(table: string): cSqlite;
     f_updateTable(table: string): cSqlite;
     f_setColumn(column: string, expr: string): cSqlite;
     f_whereExpr(expr: string): cSqlite;
@@ -63,6 +62,11 @@ interface iSqlite {
     f_isNull(): cSqlite;
     f_isNotNull(): cSqlite;
     f_pragmaInfo(table: string): cSqlite;
+    f_caseExpr(expr: string): cSqlite;
+    f_whenExpr(expr: string): cSqlite;
+    f_thenExpr(expr: string): cSqlite;
+    f_elseExpr(expr: string): cSqlite;
+    f_end(): cSqlite;
 
     f_json(json: { [key: string] : any }): string;
     f_json_array(...args: ((string | number | null)[])): string;

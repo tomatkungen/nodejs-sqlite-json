@@ -21,10 +21,10 @@ var cProperty = (function () {
     };
     cProperty.prototype.value = function () {
         var select = this._cSqlite.selectQuery(this._cSqlite
-            .f_Select(this._cSqlite
+            .f_select(this._cSqlite
             .f_json_extract_column(this._documentName, this._property))
             .f_as(this._documentName)
-            .f_From(this._packageName)
+            .f_from(this._packageName)
             .f_buildRawQuery());
         return (Array.isArray(select) && select.length === 0 ?
             null :
@@ -84,10 +84,10 @@ var cProperty = (function () {
     };
     cProperty.prototype.valueType = function () {
         return this._cSqlite.selectQuery(this._cSqlite
-            .f_Select(this._cSqlite
+            .f_select(this._cSqlite
             .f_json_type_column(this._documentName, this._property))
             .f_as('TYPE')
-            .f_From(this._packageName)
+            .f_from(this._packageName)
             .f_buildRawQuery())[0]['TYPE'];
     };
     return cProperty;

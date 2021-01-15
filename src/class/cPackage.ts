@@ -33,13 +33,36 @@ class cPackage implements iPackage {
     }
 
     public add(...documentName: string[]): cPackage {
-
+        
         documentName.forEach((docName: string) => {
+
+            const rawQueryCount = this._cSqlite
+                .f_select('count(*)')
+                .f_as('cnt')
+                .f_from(`pragma_table_info('${this._packageName}')`)
+                .f_whereExpr(`name = '${docName}'`)
+                .f_buildRawQuery();
+
+            const result = this._cSqlite.selectQuery(
+                this._cSqlite
+                    .f_select('')
+                    .f_caseExpr('cnt')
+                    .f_whenExpr('0').f_thenExpr('0')
+                    .f_elseExpr('1')
+                    .f_end()
+                    .f_as('total')
+                    .f_from(`(${rawQueryCount})`)
+                    .f_buildRawQuery()
+            );
+
+            if (result && result.length > 0 && result[0].total > 0)
+                return;
+
             this._cSqlite
                 .executeQuery(
                     this._cSqlite
                         .f_alterTableAddColumn(this._packageName)
-                        .f_AddColumn(`${docName} json`)
+                        .f_addColumn(`${docName} json`)
                         .f_buildRawQuery()
                 );
         });
@@ -52,8 +75,8 @@ class cPackage implements iPackage {
         return this._cSqlite
             .selectQuery(
                 this._cSqlite
-                    .f_Select('*')
-                    .f_From(this._packageName)
+                    .f_select('*')
+                    .f_from(this._packageName)
                     .f_limit(1)
                     .f_buildRawQuery()
             )
@@ -69,8 +92,8 @@ class cPackage implements iPackage {
         return this._cSqlite
             .selectQuery(
                 this._cSqlite
-                    .f_Select('*')
-                    .f_From(this._packageName)
+                    .f_select('*')
+                    .f_from(this._packageName)
                     .f_limit(1)
                     .f_buildRawQuery()
             )

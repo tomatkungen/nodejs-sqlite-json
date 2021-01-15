@@ -44,10 +44,27 @@ var cPackage = (function () {
             documentName[_i] = arguments[_i];
         }
         documentName.forEach(function (docName) {
+            var rawQueryCount = _this._cSqlite
+                .f_select('count(*)')
+                .f_as('cnt')
+                .f_from("pragma_table_info('" + _this._packageName + "')")
+                .f_whereExpr("name = '" + docName + "'")
+                .f_buildRawQuery();
+            var result = _this._cSqlite.selectQuery(_this._cSqlite
+                .f_select('')
+                .f_caseExpr('cnt')
+                .f_whenExpr('0').f_thenExpr('0')
+                .f_elseExpr('1')
+                .f_end()
+                .f_as('total')
+                .f_from("(" + rawQueryCount + ")")
+                .f_buildRawQuery());
+            if (result && result.length > 0 && result[0].total > 0)
+                return;
             _this._cSqlite
                 .executeQuery(_this._cSqlite
                 .f_alterTableAddColumn(_this._packageName)
-                .f_AddColumn(docName + " json")
+                .f_addColumn(docName + " json")
                 .f_buildRawQuery());
         });
         return this;
@@ -55,8 +72,8 @@ var cPackage = (function () {
     cPackage.prototype.toJson = function () {
         return this._cSqlite
             .selectQuery(this._cSqlite
-            .f_Select('*')
-            .f_From(this._packageName)
+            .f_select('*')
+            .f_from(this._packageName)
             .f_limit(1)
             .f_buildRawQuery())
             .reduce(function (prev, curr) {
@@ -67,8 +84,8 @@ var cPackage = (function () {
     cPackage.prototype.toArray = function () {
         return this._cSqlite
             .selectQuery(this._cSqlite
-            .f_Select('*')
-            .f_From(this._packageName)
+            .f_select('*')
+            .f_from(this._packageName)
             .f_limit(1)
             .f_buildRawQuery())
             .reduce(function (prev, obj) {

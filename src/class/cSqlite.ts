@@ -81,7 +81,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
         return this.getQuery();
     };
 
-    public f_Select(...columns: string[]): cSqlite {
+    public f_select(...columns: string[]): cSqlite {
         this.initQuery()
             .addQuery('SELECT')
             .addSpace()
@@ -99,7 +99,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
         return this;
     }
 
-    public f_From(table: string): cSqlite {
+    public f_from(table: string): cSqlite {
         this.addSpace()
             .addQuery('FROM')
             .addSpace()
@@ -139,7 +139,7 @@ class cSqlite extends aSqliteNode implements iSqlite {
         return this;
     }
 
-    public f_AddColumn(columnDefinition: string): cSqlite {
+    public f_addColumn(columnDefinition: string): cSqlite {
         this.addSpace()
             .addQuery('ADD COLUMN')
             .addSpace()
@@ -269,6 +269,49 @@ class cSqlite extends aSqliteNode implements iSqlite {
             .addLeftParenthes()
             .addQuery(table)
             .addRightParenthes()
+
+        return this;
+    }
+
+    public f_caseExpr(expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('CASE')
+            .addSpace()
+            .addQuery(expr);
+
+        return this;
+    }
+
+    public f_whenExpr(expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('WHEN')
+            .addSpace()
+            .addQuery(expr);
+
+        return this;
+    }
+
+    public f_thenExpr(expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('THEN')
+            .addSpace()
+            .addQuery(expr);
+
+        return this;
+    }
+
+    public f_elseExpr(expr: string): cSqlite {
+        this.addSpace()
+            .addQuery('ELSE')
+            .addSpace()
+            .addQuery(expr);
+
+        return this;
+    }
+
+    public f_end(): cSqlite {
+        this.addSpace()
+            .addQuery('END');
 
         return this;
     }

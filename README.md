@@ -15,12 +15,15 @@ Install
 
     Return Class.Package
  */
+
+// Create { <p1>: null } 
+// No override Class.Package if exist, Create Class.Package if not exist
 nDocument.Package('<PackageName>');
-// or
+// or with documents
 nDocument.Package('<PackageName>', '<DocumentName1>', '<DocumentName2>', ...);
 
-// Return Class.Package
-// Creates { <PackageName>: { <DocumentName1>: .., <DocumentName2>: .., ...} }
+// Add Class.Documents to Class.Package { <p1>: { <d1>: .., <d2>: .., ...} }
+// No override document if exist, Create document if not exist
 nDocument.Package('<PackageName>')
         .add('<DocumentName1>')
         .add('<DocumentName2>', '<DocumentName3>')

@@ -27,7 +27,7 @@ class cProperty implements iProperty {
     public value(): { [key: string]: any } {
         const select = this._cSqlite.selectQuery(
             this._cSqlite
-                .f_Select(
+                .f_select(
                     this._cSqlite
                         .f_json_extract_column(
                             this._documentName,
@@ -35,7 +35,7 @@ class cProperty implements iProperty {
                         )
                 )
                 .f_as(this._documentName)
-                .f_From(this._packageName)
+                .f_from(this._packageName)
                 .f_buildRawQuery()
         );
 
@@ -152,7 +152,7 @@ class cProperty implements iProperty {
     public valueType(): tValueType {
         return this._cSqlite.selectQuery(
             this._cSqlite
-                .f_Select(
+                .f_select(
                     this._cSqlite
                     .f_json_type_column(
                         this._documentName,
@@ -160,7 +160,7 @@ class cProperty implements iProperty {
                     )
                 )
                 .f_as('TYPE')
-            .f_From(this._packageName)
+            .f_from(this._packageName)
             .f_buildRawQuery()
         )[0]['TYPE'];
     }
