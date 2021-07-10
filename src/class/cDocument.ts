@@ -12,7 +12,7 @@ class cDocument implements iDocument {
     constructor(documentName: string, packageName?: string) {
         this._cSqlite       = new cSqlite();
 
-        this._documentName  = documentName || cSqlite.databaseName();
+        this._documentName  = documentName || cSqlite.documentName();
         this._packageName   = packageName || cSqlite.packageName();
 
         // Create table with default json column
